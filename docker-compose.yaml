@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  loa-stat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./src:/loa-stat/src
+    env_file:
+      - ./.env
+    ports:
+      - 7942:7942
