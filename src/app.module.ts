@@ -5,6 +5,7 @@ import { GoogleSheetModule } from './google-sheet/google-sheet.module';
 import { NecordModule } from 'necord';
 import { IntentsBitField } from 'discord.js';
 import { AppService } from './app.service';
+import { ChaosDungeonModule } from './chaos-dungeon/chaos-dungeon.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { AppService } from './app.service';
     }),
     GoogleSheetModule,
     LostarkModule,
+    ChaosDungeonModule,
   ],
   providers: [AppService],
 })
