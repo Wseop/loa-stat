@@ -16,22 +16,15 @@ export class LostarkService {
   }
 
   private async loadApiKey() {
-    try {
-      const result = await this.googleSheetService.spreadsheets().values.get({
-        spreadsheetId: process.env.SHEET_ID,
-        range: 'apikey!A:A',
-      });
+    const result = await this.googleSheetService.get('apikey');
 
-      if (result?.data?.values) {
-        result.data.values.forEach((value) => {
-          this.apiKeys.push(value[0]);
-        });
-        this.logger.log('ApiKey load success');
-      } else {
-        this.logger.error('ApiKey load fail');
-      }
-    } catch (error) {
-      this.logger.error(error);
+    if (result?.data?.values) {
+      result.data.values.forEach((value) => {
+        this.apiKeys.push(value[0]);
+      });
+      this.logger.log('ApiKey load success');
+    } else {
+      this.logger.error('ApiKey load fail');
     }
   }
 
