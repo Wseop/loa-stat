@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { GoogleSheetService } from 'src/google-sheet/google-sheet.service';
+import { ChaosRewardDto } from './dtos/chaos-reward.dto';
 
 @Injectable()
 export class ChaosDungeonService {
@@ -41,16 +42,16 @@ export class ChaosDungeonService {
   }
 
   // 카오스던전 레벨별 보상 평균 반환
-  async getAvgReward() {
-    const result = [];
+  async getAvgReward(): Promise<ChaosRewardDto[]> {
+    const result: ChaosRewardDto[] = [];
     const sum = this.getSum(await this.getData());
     const rewardKeys = [
-      '실링',
-      '명예의 파편',
-      '파괴석',
-      '수호석',
-      '돌파석',
-      '보석',
+      'silling',
+      'shard',
+      'destruction',
+      'protection',
+      'leap',
+      'gem',
     ];
 
     if (!sum) return null;
@@ -58,8 +59,16 @@ export class ChaosDungeonService {
     for (let level in sum) {
       if (sum[level][0] === 0) continue;
 
-      const avgReward = { level };
-      const count = sum[level][0];
+      const avgReward: ChaosRewardDto = {
+        level,
+        silling: 0,
+        shard: 0,
+        destruction: 0,
+        protection: 0,
+        leap: 0,
+        gem: 0,
+      };
+      const count: number = sum[level][0];
 
       for (let i = 1; i < sum[level].length; i++) {
         avgReward[rewardKeys[i - 1]] = sum[level][i] / count;
