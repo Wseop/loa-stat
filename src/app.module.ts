@@ -4,6 +4,7 @@ import { LostarkModule } from './lostark/lostark.module';
 import { GoogleSheetModule } from './google-sheet/google-sheet.module';
 import { NecordModule } from 'necord';
 import { IntentsBitField } from 'discord.js';
+import { AppService } from './app.service';
 
 @Module({
   imports: [
@@ -19,5 +20,6 @@ import { IntentsBitField } from 'discord.js';
     GoogleSheetModule,
     LostarkModule,
   ],
+  providers: [AppService],
 })
 export class AppModule {}
