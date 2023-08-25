@@ -1,30 +1,19 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { client_email, private_key } from '../../credentials.json';
-import { google, sheets_v4 } from 'googleapis';
-import { JWT } from 'google-auth-library';
+import { GoogleSheetService } from 'src/google-sheet/google-sheet.service';
 
 @Injectable()
 export class LostarkService {
-  private readonly authorize: JWT;
-  private readonly sheet: sheets_v4.Sheets;
   private readonly logger: Logger = new Logger(LostarkService.name);
   private readonly apiKeys: string[] = [];
   private apiKeyIndex: number = 0;
 
-  constructor() {
-    this.authorize = new google.auth.JWT(client_email, null, private_key, [
-      'https://www.googleapis.com/auth/spreadsheets',
-    ]);
-    this.sheet = google.sheets({
-      version: 'v4',
-      auth: this.authorize,
-    });
+  constructor(private readonly googleSheetService: GoogleSheetService) {
     this.loadApiKey();
   }
 
   private async loadApiKey() {
     try {
-      const result = await this.sheet.spreadsheets.values.get({
+      const result = await this.googleSheetService.spreadsheets().values.get({
         spreadsheetId: process.env.SHEET_API_KEY,
         range: 'A:A',
       });
@@ -33,8 +22,9 @@ export class LostarkService {
         result.data.values.forEach((value) => {
           this.apiKeys.push(value[0]);
         });
+        this.logger.log('ApiKey load success');
       } else {
-        this.logger.warn('failed to load apikey');
+        this.logger.error('ApiKey load fail');
       }
     } catch (error) {
       this.logger.error(error);
