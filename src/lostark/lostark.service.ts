@@ -19,7 +19,7 @@ export class LostarkService {
     try {
       const result = await this.googleSheetService.spreadsheets().values.get({
         spreadsheetId: process.env.SHEET_ID,
-        range: 'A:A',
+        range: 'apikey!A:A',
       });
 
       if (result?.data?.values) {
