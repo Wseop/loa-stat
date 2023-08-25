@@ -18,7 +18,7 @@ export class LostarkService {
   private async loadApiKey() {
     try {
       const result = await this.googleSheetService.spreadsheets().values.get({
-        spreadsheetId: process.env.SHEET_API_KEY,
+        spreadsheetId: process.env.SHEET_ID,
         range: 'A:A',
       });
 
