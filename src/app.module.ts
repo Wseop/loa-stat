@@ -2,8 +2,22 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { LostarkModule } from './lostark/lostark.module';
 import { GoogleSheetModule } from './google-sheet/google-sheet.module';
+import { NecordModule } from 'necord';
+import { IntentsBitField } from 'discord.js';
 
 @Module({
-  imports: [ConfigModule.forRoot(), GoogleSheetModule, LostarkModule],
+  imports: [
+    ConfigModule.forRoot(),
+    NecordModule.forRoot({
+      token: process.env.BOT_TOKEN,
+      intents: [
+        IntentsBitField.Flags.Guilds,
+        IntentsBitField.Flags.MessageContent,
+      ],
+      development: [process.env.GUILD_ID],
+    }),
+    GoogleSheetModule,
+    LostarkModule,
+  ],
 })
 export class AppModule {}
