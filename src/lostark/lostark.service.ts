@@ -115,7 +115,9 @@ export class LostarkService {
     }
   }
 
-  async getAvgPrice(marketItemId: MarketItemId): Promise<number> {
+  async getAvgPrice(
+    marketItemId: (typeof MarketItemId)[keyof typeof MarketItemId],
+  ): Promise<number> {
     const result: {
       Name: string;
       TradeRemainCount: number;

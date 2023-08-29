@@ -1,7 +1,7 @@
 import { AuctionItemCategory } from '../enums/lostark-item.enum';
 
 export class RequestAuctionItem {
-  categoryCode: AuctionItemCategory;
+  categoryCode: (typeof AuctionItemCategory)[keyof typeof AuctionItemCategory];
   pageNo: number;
   itemName?: string;
   itemGrade?: string;
