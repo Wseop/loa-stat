@@ -61,8 +61,10 @@ export class NoticeInformService {
         }
       });
 
-      this.lastNoticeId = lastNoticeId;
-      this.logger.log(`NoticeId updated - ${this.lastNoticeId}`);
+      if (this.lastNoticeId !== lastNoticeId) {
+        this.lastNoticeId = lastNoticeId;
+        this.logger.log(`NoticeId updated - ${this.lastNoticeId}`);
+      }
     }
 
     if (embeds.length > 0) {
