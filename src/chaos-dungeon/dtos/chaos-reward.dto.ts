@@ -21,4 +21,10 @@ export class ChaosRewardDto {
 
   @ApiProperty({ type: Number })
   gem: number;
+
+  @ApiProperty({ type: Number })
+  goldValue: number;
+
+  @ApiProperty({ type: Number })
+  tradableGoldValue: number;
 }

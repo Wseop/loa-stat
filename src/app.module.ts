@@ -6,6 +6,7 @@ import { NecordModule } from 'necord';
 import { IntentsBitField } from 'discord.js';
 import { AppService } from './app.service';
 import { ChaosDungeonModule } from './chaos-dungeon/chaos-dungeon.module';
+import { ItemPriceModule } from './worker/item-price/item-price.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { ChaosDungeonModule } from './chaos-dungeon/chaos-dungeon.module';
     GoogleSheetModule,
     LostarkModule,
     ChaosDungeonModule,
+    ItemPriceModule,
   ],
   providers: [AppService],
 })
