@@ -4,9 +4,9 @@ import { LostarkModule } from './lostark/lostark.module';
 import { GoogleSheetModule } from './google-sheet/google-sheet.module';
 import { NecordModule } from 'necord';
 import { IntentsBitField } from 'discord.js';
-import { AppService } from './app.service';
 import { ChaosDungeonModule } from './chaos-dungeon/chaos-dungeon.module';
 import { ItemPriceModule } from './worker/item-price/item-price.module';
+import { NoticeInformModule } from './worker/notice-informer/notice-inform.module';
 
 @Module({
   imports: [
@@ -23,7 +23,7 @@ import { ItemPriceModule } from './worker/item-price/item-price.module';
     LostarkModule,
     ChaosDungeonModule,
     ItemPriceModule,
+    NoticeInformModule,
   ],
-  providers: [AppService],
 })
 export class AppModule {}

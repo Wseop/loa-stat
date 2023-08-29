@@ -1,13 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { LostarkService } from './lostark/lostark.service';
-import { LostarkNotice } from './lostark/interfaces/lostark-notice.interface';
-import { EmbedBuilder } from 'discord.js';
 import axios from 'axios';
+import { EmbedBuilder } from 'discord.js';
+import { LostarkNotice } from 'src/lostark/interfaces/lostark-notice.interface';
+import { LostarkService } from 'src/lostark/lostark.service';
 
 @Injectable()
-export class AppService {
-  private readonly logger: Logger = new Logger(AppService.name);
-  private lastLostarkNoticeId: number = 0;
+export class NoticeInformService {
+  private readonly logger: Logger = new Logger(NoticeInformService.name);
+  private lastNoticeId: number = 0;
 
   constructor(private readonly lostarkService: LostarkService) {
     setTimeout(() => {
@@ -15,7 +15,7 @@ export class AppService {
     }, 1000 * 5);
 
     setInterval(() => {
-      if (this.lastLostarkNoticeId !== 0) this.postLostarkNotice();
+      if (this.lastNoticeId !== 0) this.postLostarkNotice();
     }, 1000 * 60);
   }
 
@@ -25,14 +25,19 @@ export class AppService {
     while (true) {
       const notices: LostarkNotice[] = await this.lostarkService.getNotices();
 
-      if (notices && notices.length > 0) {
-        this.lastLostarkNoticeId = notices[0].noticeId;
+      if (notices?.length > 0) {
+        for (let notice of notices) {
+          this.lastNoticeId =
+            this.lastNoticeId < notice.noticeId
+              ? notice.noticeId
+              : this.lastNoticeId;
+        }
         break;
       } else {
         await new Promise((_) => setTimeout(_, 1000 * 10));
       }
     }
-    this.logger.log(`Refresh Lostark notice id - ${this.lastLostarkNoticeId}`);
+    this.logger.log(`Refresh Lostark notice id - ${this.lastNoticeId}`);
   }
 
   // 디스코드 채널로 신규 공지 posting
@@ -41,10 +46,10 @@ export class AppService {
     const embeds: EmbedBuilder[] = [];
 
     if (notices) {
-      let lastNoticeId = this.lastLostarkNoticeId;
+      let lastNoticeId = this.lastNoticeId;
 
       notices.forEach((notice: LostarkNotice) => {
-        if (notice.noticeId > this.lastLostarkNoticeId) {
+        if (notice.noticeId > this.lastNoticeId) {
           embeds.push(
             new EmbedBuilder()
               .setTitle(notice.title)
@@ -56,7 +61,7 @@ export class AppService {
         }
       });
 
-      this.lastLostarkNoticeId = lastNoticeId;
+      this.lastNoticeId = lastNoticeId;
     }
 
     if (embeds.length > 0) {
