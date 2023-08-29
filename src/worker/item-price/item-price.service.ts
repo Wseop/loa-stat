@@ -16,7 +16,7 @@ export class ItemPriceService {
     setTimeout(async () => {
       await this.updateMarketItemPrice();
       this.logger.log('MarketItemPrice initialized');
-    }, 5000);
+    }, 1000 * 5);
     setInterval(() => {
       this.updateMarketItemPrice();
     }, 1000 * 60);
@@ -24,7 +24,7 @@ export class ItemPriceService {
     setTimeout(async () => {
       await this.updateAuctionItemPrice();
       this.logger.log('AuctionItemPrice initialized');
-    }, 5000);
+    }, 1000 * 5);
     setInterval(() => {
       this.updateAuctionItemPrice();
     }, 1000 * 60);

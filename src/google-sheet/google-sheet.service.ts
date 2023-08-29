@@ -18,6 +18,8 @@ export class GoogleSheetService {
       version: 'v4',
       auth: this.authorize,
     });
+
+    this.logger.log('GoogleSheetService initialized');
   }
 
   async get(range: string): GaxiosPromise<sheets_v4.Schema$ValueRange> {
