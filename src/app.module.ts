@@ -7,6 +7,7 @@ import { IntentsBitField } from 'discord.js';
 import { ChaosDungeonModule } from './chaos-dungeon/chaos-dungeon.module';
 import { ItemPriceModule } from './worker/item-price/item-price.module';
 import { NoticeInformModule } from './worker/notice-informer/notice-inform.module';
+import { GuardianModule } from './guardian/guardian.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { NoticeInformModule } from './worker/notice-informer/notice-inform.modul
     GoogleSheetModule,
     LostarkModule,
     ChaosDungeonModule,
+    GuardianModule,
     ItemPriceModule,
     NoticeInformModule,
   ],
