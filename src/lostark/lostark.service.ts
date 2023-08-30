@@ -416,7 +416,49 @@ export class LostarkService {
 
   private parseCharacterSkill(character): Skill[] {
     const result: Skill[] = [];
+    const armorySkill = {};
 
-    return result;
+    if (character?.ArmorySkills && character.ArmoryGem) {
+      character.ArmorySkills.forEach((skill) => {
+        if (skill.Level >= 4 || skill.Rune) {
+          armorySkill[skill.Name] = {
+            name: skill.Name,
+            level: skill.Level,
+            tripods: skill.Tripods.map((tripod) => {
+              if (tripod.IsSelected) return tripod.Name;
+            }).filter((element) => element),
+            rune: skill.Rune
+              ? {
+                  name: skill.Rune.Name,
+                  grade: skill.Rune.Grade,
+                }
+              : null,
+            gem: [],
+          };
+        }
+      });
+
+      character.ArmoryGem.Effects.forEach((gemEffect) => {
+        if (armorySkill[gemEffect.Name]) {
+          const gemName = character.ArmoryGem.Gems[gemEffect.GemSlot].Name;
+
+          if (gemName.includes('멸화')) {
+            armorySkill[gemEffect.Name].gem.push('멸화');
+          } else if (gemName.includes('홍염')) {
+            armorySkill[gemEffect.Name].gem.push('홍염');
+          }
+        }
+      });
+    }
+
+    for (let skillName in armorySkill) {
+      result.push(armorySkill[skillName]);
+    }
+
+    if (result.length > 0) {
+      return result;
+    } else {
+      return null;
+    }
   }
 }
