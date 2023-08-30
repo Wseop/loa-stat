@@ -11,6 +11,7 @@ import {
   Character,
   Engraving,
   Profile,
+  Skill,
 } from './interfaces/lostark-character.interface';
 import { EngravingService } from 'src/engraving/engraving.service';
 
@@ -210,13 +211,13 @@ export class LostarkService {
   ///////////////
   async searchCharacter(characterName: string): Promise<Character> {
     const result = await this.get(
-      //`/armories/characters/${characterName}?filters=profiles%2Bequipment%2Bcombat-skills%2Bengravings%2Bgems`,
-      `/armories/characters/${characterName}?filters=profiles%2Bequipment%2Bengravings`,
+      `/armories/characters/${characterName}?filters=profiles%2Bequipment%2Bengravings%2Bcombat-skills%2Bgems`,
     );
 
     if (result) {
       const character: Character = {
         profile: this.parseCharacterProfile(result),
+        skills: this.parseCharacterSkill(result),
       };
 
       // 하나라도 유효하지 않은 값이 있으면 null을 반환
@@ -309,14 +310,9 @@ export class LostarkService {
 
   private parseSet(equipments): string {
     const setList = ['구원', '악몽', '사멸', '지배', '갈망', '환각'];
-    const setCounts = [
-      { set: '구원', count: 0 },
-      { set: '악몽', count: 0 },
-      { set: '사멸', count: 0 },
-      { set: '지배', count: 0 },
-      { set: '갈망', count: 0 },
-      { set: '환각', count: 0 },
-    ];
+    const setCounts = setList.map((value) => {
+      return { set: value, count: 0 };
+    });
     let count = 0;
     let isEstherWeapon = false;
     let handSet = -1;
@@ -416,5 +412,11 @@ export class LostarkService {
 
     if (result.length === 0) return null;
     else return result;
+  }
+
+  private parseCharacterSkill(character): Skill[] {
+    const result: Skill[] = [];
+
+    return result;
   }
 }
