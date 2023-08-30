@@ -7,6 +7,12 @@ import {
   AuctionItem,
   RequestAuctionItem,
 } from './interfaces/lostark-auction.interface';
+import {
+  Character,
+  Engraving,
+  Profile,
+} from './interfaces/lostark-character.interface';
+import { EngravingService } from 'src/engraving/engraving.service';
 
 @Injectable()
 export class LostarkService {
@@ -14,10 +20,16 @@ export class LostarkService {
   private readonly apiKeys: string[] = [];
   private apiKeyIndex: number = 0;
 
-  constructor(private readonly googleSheetService: GoogleSheetService) {
+  constructor(
+    private readonly googleSheetService: GoogleSheetService,
+    private readonly engravingService: EngravingService,
+  ) {
     this.loadApiKey();
   }
 
+  /////////
+  // API //
+  /////////
   private async loadApiKey() {
     const result = await this.googleSheetService.get('apikey');
 
@@ -82,6 +94,9 @@ export class LostarkService {
     }
   }
 
+  ////////////
+  // NOTICE //
+  ////////////
   async getNotices(): Promise<LostarkNotice[]> {
     const result = await this.get('/news/notices');
 
@@ -115,6 +130,9 @@ export class LostarkService {
     }
   }
 
+  ////////////
+  // MARKET //
+  ////////////
   async getAvgPrice(
     marketItemId: (typeof MarketItemId)[keyof typeof MarketItemId],
   ): Promise<number> {
@@ -135,6 +153,9 @@ export class LostarkService {
     else return null;
   }
 
+  /////////////
+  // AUCTION //
+  /////////////
   async searchAuctionItem(request: RequestAuctionItem): Promise<AuctionItem> {
     const result = await this.post('/auctions/items', {
       Sort: 'BUY_PRICE',
@@ -182,5 +203,218 @@ export class LostarkService {
     }
 
     return auctionItem;
+  }
+
+  ///////////////
+  // CHARACTER //
+  ///////////////
+  async searchCharacter(characterName: string): Promise<Character> {
+    const result = await this.get(
+      //`/armories/characters/${characterName}?filters=profiles%2Bequipment%2Bcombat-skills%2Bengravings%2Bgems`,
+      `/armories/characters/${characterName}?filters=profiles%2Bequipment%2Bengravings`,
+    );
+
+    if (result) {
+      const character: Character = {
+        profile: this.parseCharacterProfile(result),
+      };
+
+      // 하나라도 유효하지 않은 값이 있으면 null을 반환
+      for (let key in character) {
+        if (!character[key]) return null;
+      }
+
+      return character;
+    } else {
+      return null;
+    }
+  }
+
+  private parseCharacterProfile(character): Profile {
+    if (
+      character?.ArmoryProfile &&
+      character.ArmoryEquipment &&
+      character.ArmoryEngraving
+    ) {
+      const result: Profile = {
+        characterName: character.ArmoryProfile.CharacterName,
+        serverName: character.ArmoryProfile.ServerName,
+        className: character.ArmoryProfile.CharacterClassName,
+        classEngraving: null,
+        itemLevel: Number(
+          character.ArmoryProfile.ItemAvgLevel.replace(',', ''),
+        ),
+        stat: this.parseStat(character.ArmoryProfile.Stats),
+        set: this.parseSet(character.ArmoryEquipment),
+        engravings: this.parseEngraving(character.ArmoryEngraving),
+        elixir: this.parseElixir(character.ArmoryEquipment),
+      };
+
+      // 직업각인정보 세팅
+      if (result.engravings) {
+        for (let engraving of result.engravings) {
+          if (this.engravingService.isClassEngraving(engraving.name)) {
+            result.classEngraving = engraving.name;
+            break;
+          }
+        }
+      }
+
+      // 하나라도 유효하지 않은 값이 있으면 null을 반환
+      for (let key in result) {
+        if (!result[key]) return null;
+      }
+
+      return result;
+    } else {
+      return null;
+    }
+  }
+
+  private parseStat(stats): string {
+    const statValues: { stat: string; value: number }[] = [];
+    let result = '';
+
+    stats.forEach((stat) => {
+      const type = stat.Type;
+      const value = Number(stat.Value);
+
+      // 치특신이면서 값이 200이상인 경우만 유효 특성으로 판단
+      if (
+        (type === '치명' || type === '특화' || type === '신속') &&
+        value >= 200
+      ) {
+        statValues.push({
+          stat: type,
+          value,
+        });
+      }
+    });
+
+    // 높은 특성순으로 앞글자만 추출
+    statValues.sort((a, b) => {
+      return b.value - a.value;
+    });
+    statValues.forEach((statValue) => {
+      result += statValue.stat[0];
+    });
+
+    // 유효 특성이 2개 이상인 경우만 결과 반환
+    if (result.length >= 2) {
+      return result;
+    } else {
+      return null;
+    }
+  }
+
+  private parseSet(equipments): string {
+    const setList = ['구원', '악몽', '사멸', '지배', '갈망', '환각'];
+    const setCounts = [
+      { set: '구원', count: 0 },
+      { set: '악몽', count: 0 },
+      { set: '사멸', count: 0 },
+      { set: '지배', count: 0 },
+      { set: '갈망', count: 0 },
+      { set: '환각', count: 0 },
+    ];
+    let count = 0;
+    let isEstherWeapon = false;
+    let handSet = -1;
+    let result = '';
+
+    equipments.forEach((equipment) => {
+      const type = equipment.Type;
+      const name = equipment.Name;
+      const grade = equipment.Grade;
+
+      if (type === '무기') {
+        if (grade === '에스더') {
+          isEstherWeapon = true;
+          count++;
+        } else {
+          for (let i = 0; i < setList.length; i++) {
+            if (name.includes(setList[i])) {
+              setCounts[i].count++;
+              count++;
+            }
+          }
+        }
+      } else if (
+        type === '투구' ||
+        type === '상의' ||
+        type === '하의' ||
+        type === '장갑' ||
+        type === '어깨'
+      ) {
+        for (let i = 0; i < setList.length; i++) {
+          if (name.includes(setList[i])) {
+            setCounts[i].count++;
+            count++;
+            if (type === '장갑') handSet = i;
+          }
+        }
+      }
+    });
+
+    // 에스더무기는 장갑의 세트효과를 받음
+    if (isEstherWeapon && handSet !== -1) setCounts[handSet].count++;
+    // 6세트가 아닌경우 중단
+    if (count !== 6) return null;
+
+    setCounts.sort((a, b) => {
+      return a.count - b.count;
+    });
+    setCounts.forEach((setCount) => {
+      if (setCount.count > 0) {
+        result += `${setCount.count}${setCount.set}`;
+      }
+    });
+
+    return result;
+  }
+
+  private parseElixir(equipments): string {
+    let elixir = null;
+
+    for (let equipment of equipments) {
+      if (equipment.Type === '장갑') {
+        const tooltip = JSON.parse(equipments[1].Tooltip);
+
+        for (let element in tooltip) {
+          if (tooltip[element].type === 'IndentStringGroup') {
+            const value = tooltip[element].value;
+
+            if (value?.Element_000?.topStr) {
+              const topStr = value.Element_000?.topStr;
+
+              if (topStr.includes('연성 추가 효과')) {
+                if (topStr.includes('(1단계)') || topStr.includes('(2단계)')) {
+                  elixir = topStr.substring(83, topStr.indexOf('(') - 1);
+                }
+                break;
+              }
+            }
+          }
+        }
+        break;
+      }
+    }
+
+    return elixir;
+  }
+
+  private parseEngraving(engravings): Engraving[] {
+    const result: Engraving[] = [];
+
+    engravings.Effects.forEach((engraving) => {
+      const data = engraving.Name;
+      const name = data.substring(0, data.indexOf('Lv.') - 1);
+      const level = data.substring(data.indexOf('Lv.') + 4, data.length);
+
+      result.push({ name, level });
+    });
+
+    if (result.length === 0) return null;
+    else return result;
   }
 }
