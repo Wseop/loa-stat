@@ -8,6 +8,7 @@ import { ChaosDungeonModule } from './chaos-dungeon/chaos-dungeon.module';
 import { ItemPriceModule } from './worker/item-price/item-price.module';
 import { NoticeInformModule } from './worker/notice-informer/notice-inform.module';
 import { GuardianModule } from './guardian/guardian.module';
+import { EngravingModule } from './engraving/engraving.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { GuardianModule } from './guardian/guardian.module';
       development: [process.env.GUILD_ID],
     }),
     GoogleSheetModule,
+    EngravingModule,
     LostarkModule,
     ChaosDungeonModule,
     GuardianModule,
