@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import axios from 'axios';
 import { GoogleSheetService } from 'src/google-sheet/google-sheet.service';
 import { LostarkNotice } from './interfaces/lostark-notice.interface';
-import { MarketItemId } from './enums/lostark-item.enum';
+import { AuctionItemCategory, MarketItemId } from './enums/lostark-item.enum';
 import {
   AuctionItem,
   RequestAuctionItem,
@@ -26,6 +26,12 @@ export class LostarkService {
     private readonly engravingService: EngravingService,
   ) {
     this.loadApiKey();
+
+    setTimeout(async () => {
+      this.logger.debug(await this.searchCharacter('쿠키바닐라쉐이크'));
+      this.logger.debug(await this.searchCharacter('곡성군귀농의칼날'));
+      this.logger.debug(await this.searchCharacter('방울토마토라면'));
+    }, 3000);
   }
 
   /////////
@@ -184,19 +190,17 @@ export class LostarkService {
             itemName: item.Name,
             itemGrade: item.Grade,
             itemQuality: item.GradeQualty,
-            options: [],
+            options: item.Options.map((option) => {
+              return {
+                optionName: option.OptionName,
+                tripod: option.OptionNameTripod,
+                value: option.Value,
+                isPenalty: option.IsPenalty,
+                className: option.ClassName,
+              };
+            }),
             buyPrice: item.AuctionInfo.BuyPrice,
           };
-
-          item.Options.forEach((option) => {
-            auctionItem.options.push({
-              optionName: option.OptionName,
-              tripod: option.OptionNameTripod,
-              value: option.Value,
-              isPenalty: option.isPenalty,
-              className: option.ClassName,
-            });
-          });
 
           break;
         }
@@ -231,27 +235,25 @@ export class LostarkService {
     }
   }
 
-  private parseCharacterProfile(character): Profile {
-    if (
-      character?.ArmoryProfile &&
-      character.ArmoryEquipment &&
-      character.ArmoryEngraving
-    ) {
+  private parseCharacterProfile({
+    ArmoryProfile,
+    ArmoryEquipment,
+    ArmoryEngraving,
+  }): Profile {
+    if (ArmoryProfile && ArmoryEquipment && ArmoryEngraving) {
       const result: Profile = {
-        characterName: character.ArmoryProfile.CharacterName,
-        serverName: character.ArmoryProfile.ServerName,
-        className: character.ArmoryProfile.CharacterClassName,
+        characterName: ArmoryProfile.CharacterName,
+        serverName: ArmoryProfile.ServerName,
+        className: ArmoryProfile.CharacterClassName,
         classEngraving: null,
-        itemLevel: Number(
-          character.ArmoryProfile.ItemAvgLevel.replace(',', ''),
-        ),
-        stat: this.parseStat(character.ArmoryProfile.Stats),
-        set: this.parseSet(character.ArmoryEquipment),
-        engravings: this.parseEngraving(character.ArmoryEngraving),
-        elixir: this.parseElixir(character.ArmoryEquipment),
+        itemLevel: Number(ArmoryProfile.ItemAvgLevel.replace(',', '')),
+        stat: this.parseStat(ArmoryProfile.Stats),
+        set: this.parseSet(ArmoryEquipment),
+        engravings: this.parseEngraving(ArmoryEngraving),
+        elixir: this.parseElixir(ArmoryEquipment),
       };
 
-      // 직업각인정보 세팅
+      // parsing된 engraving값을 통해 직업각인정보 세팅
       if (result.engravings) {
         for (let engraving of result.engravings) {
           if (this.engravingService.isClassEngraving(engraving.name)) {
@@ -273,31 +275,31 @@ export class LostarkService {
   }
 
   private parseStat(stats): string {
-    const statValues: { stat: string; value: number }[] = [];
+    const statValues: { type: string; value: number }[] = stats
+      .map((stat) => {
+        const type = stat.Type;
+        const value = Number(stat.Value);
+
+        // 치특신 & 200이상인 경우만 유효 특성으로 판단
+        if (
+          (type === '치명' || type === '특화' || type === '신속') &&
+          value >= 200
+        ) {
+          return {
+            type,
+            value,
+          };
+        }
+      })
+      .filter((e) => e);
     let result = '';
-
-    stats.forEach((stat) => {
-      const type = stat.Type;
-      const value = Number(stat.Value);
-
-      // 치특신이면서 값이 200이상인 경우만 유효 특성으로 판단
-      if (
-        (type === '치명' || type === '특화' || type === '신속') &&
-        value >= 200
-      ) {
-        statValues.push({
-          stat: type,
-          value,
-        });
-      }
-    });
 
     // 높은 특성순으로 앞글자만 추출
     statValues.sort((a, b) => {
       return b.value - a.value;
     });
     statValues.forEach((statValue) => {
-      result += statValue.stat[0];
+      result += statValue.type[0];
     });
 
     // 유효 특성이 2개 이상인 경우만 결과 반환
@@ -400,33 +402,31 @@ export class LostarkService {
   }
 
   private parseEngraving(engravings): Engraving[] {
-    const result: Engraving[] = [];
-
-    engravings.Effects.forEach((engraving) => {
+    const result: Engraving[] = engravings.Effects.map((engraving) => {
       const data = engraving.Name;
       const name = data.substring(0, data.indexOf('Lv.') - 1);
       const level = data.substring(data.indexOf('Lv.') + 4, data.length);
-
-      result.push({ name, level });
+      return { name, level };
     });
 
     if (result.length === 0) return null;
     else return result;
   }
 
-  private parseCharacterSkill(character): Skill[] {
+  private parseCharacterSkill({ ArmorySkills, ArmoryGem }): Skill[] {
     const result: Skill[] = [];
     const armorySkill = {};
 
-    if (character?.ArmorySkills && character.ArmoryGem) {
-      character.ArmorySkills.forEach((skill) => {
+    if (ArmorySkills && ArmoryGem) {
+      // 채용한 스킬정보 parsing (4레벨 이상 혹은 룬을 착용한 스킬)
+      ArmorySkills.forEach((skill) => {
         if (skill.Level >= 4 || skill.Rune) {
           armorySkill[skill.Name] = {
             name: skill.Name,
             level: skill.Level,
             tripods: skill.Tripods.map((tripod) => {
               if (tripod.IsSelected) return tripod.Name;
-            }).filter((element) => element),
+            }).filter((e) => e),
             rune: skill.Rune
               ? {
                   name: skill.Rune.Name,
@@ -438,9 +438,10 @@ export class LostarkService {
         }
       });
 
-      character.ArmoryGem.Effects.forEach((gemEffect) => {
+      // 채용한 스킬들의 보석정보 추가
+      ArmoryGem.Effects.forEach((gemEffect) => {
         if (armorySkill[gemEffect.Name]) {
-          const gemName = character.ArmoryGem.Gems[gemEffect.GemSlot].Name;
+          const gemName = ArmoryGem.Gems[gemEffect.GemSlot].Name;
 
           if (gemName.includes('멸화')) {
             armorySkill[gemEffect.Name].gem.push('멸화');
