@@ -26,12 +26,6 @@ export class LostarkService {
     private readonly engravingService: EngravingService,
   ) {
     this.loadApiKey();
-
-    setTimeout(async () => {
-      this.logger.debug(await this.searchCharacter('쿠키바닐라쉐이크'));
-      this.logger.debug(await this.searchCharacter('곡성군귀농의칼날'));
-      this.logger.debug(await this.searchCharacter('방울토마토라면'));
-    }, 3000);
   }
 
   /////////
