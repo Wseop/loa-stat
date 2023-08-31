@@ -9,6 +9,8 @@ import { ItemPriceModule } from './worker/item-price/item-price.module';
 import { NoticeInformModule } from './worker/notice-informer/notice-inform.module';
 import { GuardianModule } from './guardian/guardian.module';
 import { EngravingModule } from './engraving/engraving.module';
+import { MongooseModule } from '@nestjs/mongoose';
+import { CharacterModule } from './character/character.module';
 
 @Module({
   imports: [
@@ -21,6 +23,8 @@ import { EngravingModule } from './engraving/engraving.module';
       ],
       development: [process.env.GUILD_ID],
     }),
+    MongooseModule.forRoot(process.env.MONGODB_URI, { dbName: 'loa-stat' }),
+    CharacterModule,
     GoogleSheetModule,
     EngravingModule,
     LostarkModule,

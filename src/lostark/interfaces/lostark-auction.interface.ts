@@ -1,6 +1,6 @@
 import { AuctionItemCategory } from '../enums/lostark-item.enum';
 
-export class RequestAuctionItem {
+export interface RequestAuctionItem {
   categoryCode: (typeof AuctionItemCategory)[keyof typeof AuctionItemCategory];
   pageNo: number;
   itemName?: string;
@@ -11,14 +11,14 @@ export class RequestAuctionItem {
   etcOptions?: SearchDetailOption[];
 }
 
-export class SearchDetailOption {
+export interface SearchDetailOption {
   FirstOption?: number;
   SecondOption?: number;
   MinValue?: number;
   MaxValue?: number;
 }
 
-export class AuctionItem {
+export interface AuctionItem {
   itemName: string;
   itemGrade: string;
   itemQuality?: number;
@@ -26,7 +26,7 @@ export class AuctionItem {
   buyPrice: number;
 }
 
-export class AuctionItemOption {
+export interface AuctionItemOption {
   optionName: string;
   tripod: string;
   value: number;

@@ -10,10 +10,11 @@ import {
 import {
   Character,
   Engraving,
-  Profile,
   Skill,
-} from './interfaces/lostark-character.interface';
+} from '../character/schemas/character.schema';
 import { EngravingService } from 'src/engraving/engraving.service';
+
+type Profile = Omit<Character, 'skills'>;
 
 @Injectable()
 export class LostarkService {
@@ -213,8 +214,17 @@ export class LostarkService {
     );
 
     if (result) {
+      const profile: Profile = this.parseCharacterProfile(result);
       const character: Character = {
-        profile: this.parseCharacterProfile(result),
+        characterName: profile.characterName,
+        serverName: profile.serverName,
+        className: profile.className,
+        classEngraving: profile.classEngraving,
+        itemLevel: profile.itemLevel,
+        stat: profile.stat,
+        set: profile.set,
+        engravings: profile.engravings,
+        elixir: profile.elixir,
         skills: this.parseCharacterSkill(result),
       };
 

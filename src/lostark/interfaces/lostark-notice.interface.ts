@@ -1,4 +1,4 @@
-export class LostarkNotice {
+export interface LostarkNotice {
   noticeId: number;
   title: string;
   date: Date;
