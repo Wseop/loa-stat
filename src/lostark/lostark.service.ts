@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import axios from 'axios';
 import { GoogleSheetService } from 'src/google-sheet/google-sheet.service';
 import { LostarkNotice } from './interfaces/lostark-notice.interface';
-import { AuctionItemCategory, MarketItemId } from './enums/lostark-item.enum';
+import { MarketItemId } from './enums/lostark-item.enum';
 import {
   AuctionItem,
   RequestAuctionItem,
