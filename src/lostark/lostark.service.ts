@@ -67,8 +67,10 @@ export class LostarkService {
       if (result) return result.data;
       else return null;
     } catch (error) {
-      if (error.response) this.logger.error(error.response.status);
-      else if (error.request) this.logger.error(error.request);
+      if (error.response) {
+        this.logger.debug(error.response.status);
+        return error.response.status;
+      } else if (error.request) this.logger.error(error.request);
       else this.logger.error(error.message);
     }
   }
@@ -90,8 +92,10 @@ export class LostarkService {
       if (result) return result.data;
       else return null;
     } catch (error) {
-      if (error.response) this.logger.error(error.response.status);
-      else if (error.request) this.logger.error(error.request);
+      if (error.response) {
+        this.logger.debug(error.response.status);
+        return error.response.status;
+      } else if (error.request) this.logger.error(error.request);
       else this.logger.error(error.message);
     }
   }
@@ -209,12 +213,23 @@ export class LostarkService {
   // CHARACTER //
   ///////////////
   async searchCharacter(characterName: string): Promise<Character> {
-    const result = await this.get(
+    let result = await this.get(
       `/armories/characters/${characterName}?filters=profiles%2Bequipment%2Bengravings%2Bcombat-skills%2Bgems`,
     );
 
+    // API limit 걸린경우 1분후 재시도
+    while (result === 429) {
+      this.logger.warn('Rate Limit Exceeded - Retry after 1minute');
+      await new Promise((_) => setTimeout((_) => 1000 * 60));
+      result = await this.get(
+        `/armories/characters/${characterName}?filters=profiles%2Bequipment%2Bengravings%2Bcombat-skills%2Bgems`,
+      );
+    }
+
     if (result) {
       const profile: Profile = this.parseCharacterProfile(result);
+      if (!profile) return null;
+
       const character: Character = {
         characterName: profile.characterName,
         serverName: profile.serverName,
@@ -420,6 +435,7 @@ export class LostarkService {
   private parseCharacterSkill({ ArmorySkills, ArmoryGem }): Skill[] {
     const result: Skill[] = [];
     const armorySkill = {};
+    const gemSlot = Array.from({ length: 11 }, () => '');
 
     if (ArmorySkills && ArmoryGem) {
       // 채용한 스킬정보 parsing (4레벨 이상 혹은 룬을 착용한 스킬)
@@ -443,9 +459,12 @@ export class LostarkService {
       });
 
       // 채용한 스킬들의 보석정보 추가
+      ArmoryGem.Gems.forEach((gem) => {
+        gemSlot[gem.Slot] = gem.Name;
+      });
       ArmoryGem.Effects.forEach((gemEffect) => {
         if (armorySkill[gemEffect.Name]) {
-          const gemName = ArmoryGem.Gems[gemEffect.GemSlot].Name;
+          const gemName = gemSlot[gemEffect.GemSlot];
 
           if (gemName.includes('멸화')) {
             armorySkill[gemEffect.Name].gem.push('멸화');
