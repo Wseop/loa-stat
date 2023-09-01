@@ -63,12 +63,12 @@ export class CharacterCollectService {
           }
         }
       } catch (error) {
-        if (error.response) this.logger.error(error.response.status);
+        if (error.response) this.logger.debug(error.response.status);
         else if (error.request) this.logger.error(error.request);
         else this.logger.error(error.message);
       }
 
-      await new Promise((_) => setTimeout(_, 1000 * 5));
+      await new Promise((_) => setTimeout(_, 1000 * 10));
     }
   }
 
@@ -136,7 +136,7 @@ export class CharacterCollectService {
       }
 
       this.logger.log('===== CHARACTER-COLLECT END =====');
-      await new Promise((_) => setTimeout(_, 1000 * 60 * 60 * 24));
+      await new Promise((_) => setTimeout(_, 1000 * 60 * 60 * 24 * 7));
     }
   }
 }
