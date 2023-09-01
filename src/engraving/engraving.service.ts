@@ -1,11 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { GoogleSheetService } from 'src/google-sheet/google-sheet.service';
+import { ClassEngravings } from './interfaces/engraving.interface';
 
 @Injectable()
 export class EngravingService {
   private readonly logger: Logger = new Logger(EngravingService.name);
   private engravings: string[] = [];
-  private classEngravings = {};
+  private classEngravings: ClassEngravings = {};
 
   constructor(private readonly googleSheetService: GoogleSheetService) {
     this.loadData();
@@ -37,5 +38,9 @@ export class EngravingService {
       if (this.classEngravings[key].includes(engraving)) return true;
     }
     return false;
+  }
+
+  getClassEngravings(): ClassEngravings {
+    return JSON.parse(JSON.stringify(this.classEngravings));
   }
 }

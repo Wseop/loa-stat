@@ -11,6 +11,7 @@ import { GuardianModule } from './guardian/guardian.module';
 import { EngravingModule } from './engraving/engraving.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CharacterModule } from './character/character.module';
+import { CharacterCollectModule } from './worker/character-collect/character-collect.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { CharacterModule } from './character/character.module';
     GuardianModule,
     ItemPriceModule,
     NoticeInformModule,
+    CharacterCollectModule,
   ],
 })
 export class AppModule {}
