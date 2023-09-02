@@ -35,6 +35,8 @@ export class ChaosDungeonService {
     if (!data) return null;
 
     for (let i = 1; i < data.length; i++) {
+      if (data[i].length !== 8) continue;
+
       for (let j = 1; j < data[i].length; j++) {
         const level = data[i][0];
 
