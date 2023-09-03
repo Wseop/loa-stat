@@ -37,6 +37,8 @@ export class ItemPriceService {
         this.marketItemPrice[item] = result;
       }
     }
+
+    this.logger.debug('UPDATE | market item price');
   }
 
   private async updateAuctionItemPrice() {
@@ -54,6 +56,8 @@ export class ItemPriceService {
         this.auctionItemPrice[result.itemName] = result.buyPrice;
       }
     });
+
+    this.logger.debug('UPDATE | auction item price');
   }
 
   getMarketItemPrice(itemName: string): number {
