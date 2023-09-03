@@ -10,11 +10,12 @@ import {
 import {
   Character,
   Engraving,
+  Setting,
   Skill,
 } from '../character/schemas/character.schema';
 import { EngravingService } from 'src/engraving/engraving.service';
 
-type Profile = Omit<Character, 'skills'>;
+type Profile = Omit<Character, 'skills' | 'setting'>;
 
 @Injectable()
 export class LostarkService {
@@ -236,12 +237,19 @@ export class LostarkService {
         className: profile.className,
         classEngraving: profile.classEngraving,
         itemLevel: profile.itemLevel,
-        stat: profile.stat,
-        set: profile.set,
-        engravings: profile.engravings,
-        elixir: profile.elixir,
+        setting: this.parseCharacterSetting(result),
         skills: this.parseCharacterSkill(result),
       };
+
+      // parsing된 engraving값을 통해 직업각인정보 세팅
+      if (character.setting?.engravings) {
+        for (let engraving of character.setting.engravings) {
+          if (this.engravingService.isClassEngraving(engraving.name)) {
+            character.classEngraving = engraving.name;
+            break;
+          }
+        }
+      }
 
       // 하나라도 유효하지 않은 값이 있으면 null을 반환
       for (let key in character) {
@@ -266,21 +274,26 @@ export class LostarkService {
         className: ArmoryProfile.CharacterClassName,
         classEngraving: null,
         itemLevel: Number(ArmoryProfile.ItemAvgLevel.replace(',', '')),
-        stat: this.parseStat(ArmoryProfile.Stats),
-        set: this.parseSet(ArmoryEquipment),
-        engravings: this.parseEngraving(ArmoryEngraving),
-        elixir: this.parseElixir(ArmoryEquipment),
       };
 
-      // parsing된 engraving값을 통해 직업각인정보 세팅
-      if (result.engravings) {
-        for (let engraving of result.engravings) {
-          if (this.engravingService.isClassEngraving(engraving.name)) {
-            result.classEngraving = engraving.name;
-            break;
-          }
-        }
-      }
+      return result;
+    } else {
+      return null;
+    }
+  }
+
+  private parseCharacterSetting({
+    ArmoryProfile,
+    ArmoryEquipment,
+    ArmoryEngraving,
+  }): Setting {
+    if (ArmoryProfile && ArmoryEquipment && ArmoryEngraving) {
+      const result: Setting = {
+        stat: this.parseStat(ArmoryProfile.Stats),
+        set: this.parseSet(ArmoryEquipment),
+        elixir: this.parseElixir(ArmoryEquipment),
+        engravings: this.parseEngraving(ArmoryEngraving),
+      };
 
       // 하나라도 유효하지 않은 값이 있으면 null을 반환
       for (let key in result) {

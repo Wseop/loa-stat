@@ -1,8 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
-///////////////
-// Engraving //
-///////////////
+/////////////
+// Setting //
+/////////////
 @Schema({ _id: false, versionKey: false })
 export class Engraving {
   @Prop()
@@ -11,7 +11,23 @@ export class Engraving {
   @Prop()
   level: number;
 }
-export const EngravingSchema = SchemaFactory.createForClass(Engraving);
+const EngravingSchema = SchemaFactory.createForClass(Engraving);
+
+@Schema({ _id: false, versionKey: false })
+export class Setting {
+  @Prop()
+  stat: string;
+
+  @Prop()
+  set: string;
+
+  @Prop()
+  elixir: string;
+
+  @Prop({ type: [EngravingSchema] })
+  engravings: Engraving[];
+}
+const SettingSchema = SchemaFactory.createForClass(Setting);
 
 ///////////
 // SKILL //
@@ -24,7 +40,7 @@ export class Rune {
   @Prop()
   grade: string;
 }
-export const RuneSchema = SchemaFactory.createForClass(Rune);
+const RuneSchema = SchemaFactory.createForClass(Rune);
 
 @Schema({ _id: false, versionKey: false })
 export class Skill {
@@ -41,9 +57,9 @@ export class Skill {
   rune?: Rune;
 
   @Prop({ type: [String] })
-  gem?: string[];
+  gem: string[];
 }
-export const SkillSchema = SchemaFactory.createForClass(Skill);
+const SkillSchema = SchemaFactory.createForClass(Skill);
 
 ///////////////
 // CHARACTER //
@@ -65,17 +81,8 @@ export class Character {
   @Prop()
   itemLevel: number;
 
-  @Prop()
-  stat: string;
-
-  @Prop()
-  set: string;
-
-  @Prop({ type: [EngravingSchema] })
-  engravings: Engraving[];
-
-  @Prop()
-  elixir: string;
+  @Prop({ type: SettingSchema })
+  setting: Setting;
 
   @Prop({ type: [SkillSchema] })
   skills: Skill[];
