@@ -91,13 +91,18 @@ export class CharacterCollectService {
 
   // db에 캐릭터 정보 저장
   private async runUpsertCharacter() {
+    let upsertCount = 0;
+
     while (true) {
       const character = this.characterQueue.shift();
 
       if (character) {
         await this.characterService.upsert(character);
+        upsertCount++;
       } else {
         // 큐가 비어있으면 대기
+        this.logger.debug(`UPSERT | ${upsertCount} data`);
+        upsertCount = 0;
         await new Promise((_) => setTimeout(_, 1000 * 60));
       }
     }
