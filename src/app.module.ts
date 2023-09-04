@@ -11,6 +11,7 @@ import { GuardianModule } from './guardian/guardian.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CharacterModule } from './character/character.module';
 import { CharacterCollectModule } from './worker/character-collect/character-collect.module';
+import { StatisticsModule } from './statistics/statistics.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { CharacterCollectModule } from './worker/character-collect/character-col
     }),
     MongooseModule.forRoot(process.env.MONGODB_URI, { dbName: 'loa-stat' }),
     CharacterModule,
+    StatisticsModule,
     GoogleSheetModule,
     LostarkModule,
     ChaosDungeonModule,
