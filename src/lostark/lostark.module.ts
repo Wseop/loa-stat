@@ -1,10 +1,9 @@
 import { Module } from '@nestjs/common';
 import { LostarkService } from './lostark.service';
 import { GoogleSheetModule } from 'src/google-sheet/google-sheet.module';
-import { EngravingModule } from 'src/engraving/engraving.module';
 
 @Module({
-  imports: [GoogleSheetModule, EngravingModule],
+  imports: [GoogleSheetModule],
   providers: [LostarkService],
   exports: [LostarkService],
 })

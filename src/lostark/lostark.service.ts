@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import axios from 'axios';
 import { GoogleSheetService } from 'src/google-sheet/google-sheet.service';
 import { LostarkNotice } from './interfaces/lostark-notice.interface';
-import { MarketItemId } from './enums/lostark-item.enum';
 import {
   AuctionItem,
   RequestAuctionItem,
@@ -13,7 +12,8 @@ import {
   Setting,
   Skill,
 } from '../character/schemas/character.schema';
-import { EngravingService } from 'src/engraving/engraving.service';
+import { MarketItemId } from './resources/enum';
+import { classEngravings, engravings } from './resources/const';
 
 type Profile = Omit<Character, 'skills' | 'setting'>;
 
@@ -23,10 +23,7 @@ export class LostarkService {
   private readonly apiKeys: string[] = [];
   private apiKeyIndex: number = 0;
 
-  constructor(
-    private readonly googleSheetService: GoogleSheetService,
-    private readonly engravingService: EngravingService,
-  ) {
+  constructor(private readonly googleSheetService: GoogleSheetService) {
     this.loadApiKey();
   }
 
@@ -140,9 +137,7 @@ export class LostarkService {
   ////////////
   // MARKET //
   ////////////
-  async getAvgPrice(
-    marketItemId: (typeof MarketItemId)[keyof typeof MarketItemId],
-  ): Promise<number> {
+  async getAvgPrice(marketItemId: MarketItemId): Promise<number> {
     const result: {
       Name: string;
       TradeRemainCount: number;
@@ -244,7 +239,7 @@ export class LostarkService {
       // parsing된 engraving값을 통해 직업각인정보 세팅
       if (character.setting?.engravings) {
         for (let engraving of character.setting.engravings) {
-          if (this.engravingService.isClassEngraving(engraving.name)) {
+          if (engravings.includes(engraving.name)) {
             character.classEngraving = engraving.name;
             break;
           }

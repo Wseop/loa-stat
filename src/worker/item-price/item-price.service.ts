@@ -1,10 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
-import {
-  AuctionItemCategory,
-  MarketItemId,
-} from 'src/lostark/enums/lostark-item.enum';
 import { RequestAuctionItem } from 'src/lostark/interfaces/lostark-auction.interface';
 import { LostarkService } from 'src/lostark/lostark.service';
+import { AuctionItemCategory, MarketItemId } from 'src/lostark/resources/enum';
 
 @Injectable()
 export class ItemPriceService {

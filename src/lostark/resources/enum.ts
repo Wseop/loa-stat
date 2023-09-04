@@ -17,6 +17,7 @@ export const MarketItemId = {
   '상급 오레하 융화 재료': 6861009,
   '최상급 오레하 융화 재료': 6861011,
 } as const;
+export type MarketItemId = (typeof MarketItemId)[keyof typeof MarketItemId];
 
 export const AuctionItemCategory = {
   아뮬렛: 170300,
@@ -28,3 +29,5 @@ export const AuctionItemCategory = {
   팔찌: 200040,
   보석: 210000,
 } as const;
+export type AuctionItemCategory =
+  (typeof AuctionItemCategory)[keyof typeof AuctionItemCategory];

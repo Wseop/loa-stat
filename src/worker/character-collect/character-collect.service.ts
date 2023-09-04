@@ -2,8 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import axios from 'axios';
 import { CharacterService } from 'src/character/character.service';
 import { Character } from 'src/character/schemas/character.schema';
-import { EngravingService } from 'src/engraving/engraving.service';
 import { LostarkService } from 'src/lostark/lostark.service';
+import { classEngravings, servers } from 'src/lostark/resources/const';
 
 @Injectable()
 export class CharacterCollectService {
@@ -17,7 +17,6 @@ export class CharacterCollectService {
   constructor(
     private readonly lostarkService: LostarkService,
     private readonly characterService: CharacterService,
-    private readonly engravingService: EngravingService,
   ) {
     setTimeout(() => {
       this.run();
@@ -109,25 +108,6 @@ export class CharacterCollectService {
   }
 
   private async run() {
-    const servers = [
-      '루페온',
-      '아만',
-      '카단',
-      '카제로스',
-      '카마인',
-      '아브렐슈드',
-      '실리안',
-      '니나브',
-    ];
-    const classEngravings: string[] = [];
-
-    // 직업각인 초기화
-    Object.values(this.engravingService.getClassEngravings()).forEach(
-      (value) => {
-        classEngravings.push(...value);
-      },
-    );
-
     this.runSearchCharacter();
     this.runUpsertCharacter();
 
