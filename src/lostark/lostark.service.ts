@@ -13,7 +13,7 @@ import {
   Skill,
 } from '../character/schemas/character.schema';
 import { MarketItemId } from './resources/enum';
-import { engravings } from './resources/const';
+import { classEngravings } from './resources/const';
 
 type Profile = Omit<Character, 'skills' | 'setting'>;
 
@@ -239,7 +239,7 @@ export class LostarkService {
       // parsing된 engraving값을 통해 직업각인정보 세팅
       if (character.setting?.engravings) {
         for (let engraving of character.setting.engravings) {
-          if (engravings.includes(engraving.name)) {
+          if (classEngravings.includes(engraving.name)) {
             character.classEngraving = engraving.name;
             break;
           }
