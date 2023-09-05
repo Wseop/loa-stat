@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { CharacterService } from 'src/character/character.service';
 import { CharacterStatisticsDto } from './dtos/character-statistics.dto';
-import { classEngravings, servers } from 'src/lostark/resources/const';
+import { classEngravingMap, servers } from 'src/lostark/resources/const';
 import { SettingStatisticsDto } from './dtos/setting-statistics.dto';
 import { SkillCount, SkillStatisticsDto } from './dtos/skill-statistics.dto';
 
@@ -33,9 +33,9 @@ export class StatisticsService {
       servers.forEach((value) => {
         result.server[value] = 0;
       });
-      classEngravings.forEach((value) => {
-        result.classEngraving[value] = 0;
-      });
+      for (let classEngraving in classEngravingMap) {
+        result.classEngraving[classEngraving] = 0;
+      }
 
       // data counting
       data.forEach((value) => {

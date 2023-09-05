@@ -3,7 +3,11 @@ import axios from 'axios';
 import { CharacterService } from 'src/character/character.service';
 import { Character } from 'src/character/schemas/character.schema';
 import { LostarkService } from 'src/lostark/lostark.service';
-import { classEngravings, servers } from 'src/lostark/resources/const';
+import {
+  classEngravingMap,
+  classMap,
+  servers,
+} from 'src/lostark/resources/const';
 
 @Injectable()
 export class CharacterCollectService {
@@ -24,20 +28,32 @@ export class CharacterCollectService {
   }
 
   // 서버, 직업각인 단위로 캐릭터명을 수집하여 CharacterNameQueue에 추가
-  private async collectCharacterName(server: string, classEngraving: string) {
+  private async collectCharacterName(
+    server: string,
+    className: string,
+    classEngravings: string[],
+  ) {
     let itemLevel = this.MAX_ITEM_LEVEL;
     let currentItemLevel = this.MAX_ITEM_LEVEL;
     let cursor = 0;
 
     while (currentItemLevel >= this.MIN_ITEM_LEVEL) {
       try {
-        const result = await axios.get(
-          `${process.env.CHARACTER_COLLECT_URL}?server=${server}&classEngraves[]=${classEngraving}&maxItemLevel=${itemLevel}&cursor=${cursor}`,
-        );
+        const url =
+          classEngravings.length === 1
+            ? `${process.env.CHARACTER_COLLECT_URL}?server=${server}&className=${className}&classEngraves[]=${classEngravings[0]}&maxItemLevel=${itemLevel}&cursor=${cursor}`
+            : `${process.env.CHARACTER_COLLECT_URL}?server=${server}&className=${className}&classEngraves[]=${classEngravings[0]}&classEngraves[]=${classEngravings[1]}&maxItemLevel=${itemLevel}&cursor=${cursor}`;
+        const result = await axios.get(url);
 
-        this.logger.debug(
-          `${server} | ${classEngraving} | ${itemLevel} | ${cursor}`,
-        );
+        if (classEngravings.length === 1) {
+          this.logger.debug(
+            `${server} | ${classEngravings[0]} | ${itemLevel} | ${cursor}`,
+          );
+        } else {
+          this.logger.debug(
+            `${server} | ${classEngravings[0]}, ${classEngravings[1]} | ${itemLevel} | ${cursor}`,
+          );
+        }
 
         if (result?.data.data) {
           const characters = result.data.data;
@@ -115,8 +131,18 @@ export class CharacterCollectService {
       this.logger.log('START | CharacterCollect');
 
       for (let server of servers) {
-        for (let classEngraving of classEngravings) {
-          await this.collectCharacterName(server, classEngraving);
+        for (let className in classMap) {
+          const classEngravings = classMap[className];
+
+          await this.collectCharacterName(server, className, [
+            classEngravings[0],
+          ]);
+          await this.collectCharacterName(server, className, [
+            classEngravings[1],
+          ]);
+          await this.collectCharacterName(server, className, [
+            ...classEngravings,
+          ]);
         }
       }
 
