@@ -9,11 +9,13 @@ export class CharacterStatistics {
     this.total = total;
 
     // server 초기화
+    this.server = {};
     servers.forEach((server) => {
       this.server[server] = 0;
     });
 
     // classEngraving 초기화
+    this.classEngraving = {};
     for (let classEngraving in classEngravingMap) {
       this.classEngraving[classEngraving] = 0;
     }
