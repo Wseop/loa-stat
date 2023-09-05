@@ -13,7 +13,7 @@ import {
   Skill,
 } from '../character/schemas/character.schema';
 import { MarketItemId } from './resources/enum';
-import { classEngravings, engravings } from './resources/const';
+import { engravings } from './resources/const';
 
 type Profile = Omit<Character, 'skills' | 'setting'>;
 
@@ -442,7 +442,7 @@ export class LostarkService {
 
   private parseCharacterSkill({ ArmorySkills, ArmoryGem }): Skill[] {
     const result: Skill[] = [];
-    const armorySkill = {};
+    const armorySkill: { [skillName: string]: Skill } = {};
     const gemSlot = Array.from({ length: 11 }, () => '');
 
     if (ArmorySkills && ArmoryGem) {
@@ -461,7 +461,7 @@ export class LostarkService {
                   grade: skill.Rune.Grade,
                 }
               : null,
-            gem: [],
+            gems: [],
           };
         }
       });
@@ -475,9 +475,9 @@ export class LostarkService {
           const gemName = gemSlot[gemEffect.GemSlot];
 
           if (gemName.includes('멸화')) {
-            armorySkill[gemEffect.Name].gem.push('멸화');
+            armorySkill[gemEffect.Name].gems.push('멸화');
           } else if (gemName.includes('홍염')) {
-            armorySkill[gemEffect.Name].gem.push('홍염');
+            armorySkill[gemEffect.Name].gems.push('홍염');
           }
         }
       });

@@ -1,5 +1,5 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
-import { ApiOkResponse, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
 import { StatisticsService } from './statistics.service';
 import { CharacterStatisticsDto } from './dtos/character-statistics.dto';
 import { SettingStatisticsDto } from './dtos/setting-statistics.dto';

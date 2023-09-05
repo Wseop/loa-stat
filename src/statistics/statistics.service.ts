@@ -76,15 +76,19 @@ export class StatisticsService {
       data.forEach((value) => {
         const setting = value.setting;
 
+        // stat
         if (!result.stat[setting.stat]) result.stat[setting.stat] = 0;
         result.stat[setting.stat]++;
 
+        // set
         if (!result.set[setting.set]) result.set[setting.set] = 0;
         result.set[setting.set]++;
 
+        // elixir
         if (!result.elixir[setting.elixir]) result.elixir[setting.elixir] = 0;
         result.elixir[setting.elixir]++;
 
+        // engraving
         setting.engravings.forEach((value) => {
           if (!result.engraving[value.level - 1][value.name])
             result.engraving[value.level - 1][value.name] = 0;
@@ -153,7 +157,7 @@ export class StatisticsService {
           }
 
           // gem
-          skill.gem.forEach((value) => {
+          skill.gems.forEach((value) => {
             if (value === '멸화') skillCount.myul++;
             else if (value === '홍염') skillCount.hong++;
           });

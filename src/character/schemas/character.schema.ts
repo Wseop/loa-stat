@@ -57,7 +57,7 @@ export class Skill {
   rune?: Rune;
 
   @Prop({ type: [String] })
-  gem: string[];
+  gems: string[];
 }
 const SkillSchema = SchemaFactory.createForClass(Skill);
 

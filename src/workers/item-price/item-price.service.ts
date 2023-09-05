@@ -11,19 +11,19 @@ export class ItemPriceService {
 
   constructor(private readonly lostarkService: LostarkService) {
     setTimeout(async () => {
+      this.logger.log('START | UpdateMarketItemPrice');
       await this.updateMarketItemPrice();
     }, 1000 * 5);
     setInterval(() => {
       this.updateMarketItemPrice();
-      this.logger.log('START | UpdateMarketItemPrice');
     }, 1000 * 60);
 
     setTimeout(async () => {
+      this.logger.log('START | UpdateAuctionItemPrice');
       await this.updateAuctionItemPrice();
     }, 1000 * 5);
     setInterval(() => {
       this.updateAuctionItemPrice();
-      this.logger.log('START | UpdateAuctionItemPrice');
     }, 1000 * 60);
   }
 
