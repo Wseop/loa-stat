@@ -135,3 +135,13 @@ export const classEngravingMap: { [key: string]: string } = {
   심판자: '홀리나이트',
   '축복의 오라': '홀리나이트',
 } as const;
+
+// 유효 세트만 사용
+export const sets: readonly string[] = [
+  '구원',
+  '악몽',
+  '사멸',
+  '지배',
+  '갈망',
+  '환각',
+];

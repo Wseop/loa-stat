@@ -13,7 +13,7 @@ import {
   Skill,
 } from '../character/schemas/character.schema';
 import { MarketItemId } from './resources/enum';
-import { classEngravingMap } from './resources/const';
+import { classEngravingMap, sets } from './resources/const';
 
 type Profile = Omit<Character, 'skills' | 'setting'>;
 
@@ -239,10 +239,6 @@ export class LostarkService {
       // parsing된 engraving값을 통해 직업각인정보 세팅
       if (character.setting?.engravings) {
         for (let engraving of character.setting.engravings) {
-          // if (classEngravingMap.includes(engraving.name)) {
-          //   character.classEngraving = engraving.name;
-          //   break;
-          // }
           if (classEngravingMap[engraving.name]) {
             character.classEngraving = engraving.name;
             break;
@@ -342,8 +338,7 @@ export class LostarkService {
   }
 
   private parseSet(equipments): string {
-    const setList = ['구원', '악몽', '사멸', '지배', '갈망', '환각'];
-    const setCounts = setList.map((value) => {
+    const setCounts = sets.map((value) => {
       return { set: value, count: 0 };
     });
     let count = 0;
@@ -361,8 +356,8 @@ export class LostarkService {
           isEstherWeapon = true;
           count++;
         } else {
-          for (let i = 0; i < setList.length; i++) {
-            if (name.includes(setList[i])) {
+          for (let i = 0; i < sets.length; i++) {
+            if (name.includes(sets[i])) {
               setCounts[i].count++;
               count++;
             }
@@ -375,8 +370,8 @@ export class LostarkService {
         type === '장갑' ||
         type === '어깨'
       ) {
-        for (let i = 0; i < setList.length; i++) {
-          if (name.includes(setList[i])) {
+        for (let i = 0; i < sets.length; i++) {
+          if (name.includes(sets[i])) {
             setCounts[i].count++;
             count++;
             if (type === '장갑') handSet = i;
