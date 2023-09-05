@@ -27,12 +27,6 @@ export class LostarkService {
 
   constructor(private readonly googleSheetService: GoogleSheetService) {
     this.loadApiKey();
-
-    setTimeout(async () => {
-      this.logger.debug(await this.searchCharacter('쿠키바닐라쉐이크'));
-      this.logger.debug(await this.searchCharacter('쿠키바닐라밀크쉐이크'));
-      this.logger.debug(await this.searchCharacter('ㅁㄴㅇㄹ'));
-    }, 3000);
   }
 
   /////////
