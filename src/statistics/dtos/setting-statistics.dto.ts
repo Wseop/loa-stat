@@ -1,20 +1,21 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { SettingStatistics } from '../classes/setting-statistics.class';
 
-export class SettingStatisticsDto {
+export class SettingStatisticsDto extends SettingStatistics {
   @ApiProperty({ type: Number })
-  total: number;
+  protected total: number;
 
   @ApiProperty()
-  stat: { [key: string]: number };
+  protected stat: { [key: string]: number };
 
   @ApiProperty()
-  set: { [key: string]: number };
+  protected set: { [key: string]: number };
 
   @ApiProperty()
-  elixir: { [key: string]: number };
+  protected elixir: { [key: string]: number };
 
   @ApiProperty()
-  engraving: {
+  protected engraving: {
     [key: string]: number;
   }[];
 }
