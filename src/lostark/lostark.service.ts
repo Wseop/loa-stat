@@ -13,9 +13,11 @@ import {
   Skill,
 } from '../character/schemas/character.schema';
 import { MarketItemId } from './resources/enum';
-import { classEngravingMap, sets } from './resources/const';
-
-type Profile = Omit<Character, 'skills' | 'setting'>;
+import { sets } from './resources/const';
+import {
+  CharacterBuilder,
+  Profile,
+} from 'src/character/functions/character.functions';
 
 @Injectable()
 export class LostarkService {
@@ -25,6 +27,12 @@ export class LostarkService {
 
   constructor(private readonly googleSheetService: GoogleSheetService) {
     this.loadApiKey();
+
+    setTimeout(async () => {
+      this.logger.debug(await this.searchCharacter('쿠키바닐라쉐이크'));
+      this.logger.debug(await this.searchCharacter('쿠키바닐라밀크쉐이크'));
+      this.logger.debug(await this.searchCharacter('ㅁㄴㅇㄹ'));
+    }, 3000);
   }
 
   /////////
@@ -223,35 +231,11 @@ export class LostarkService {
     }
 
     if (result) {
-      const profile: Profile = this.parseCharacterProfile(result);
-      if (!profile) return null;
-
-      const character: Character = {
-        characterName: profile.characterName,
-        serverName: profile.serverName,
-        className: profile.className,
-        classEngraving: profile.classEngraving,
-        itemLevel: profile.itemLevel,
-        setting: this.parseCharacterSetting(result),
-        skills: this.parseCharacterSkill(result),
-      };
-
-      // parsing된 engraving값을 통해 직업각인정보 세팅
-      if (character.setting?.engravings) {
-        for (let engraving of character.setting.engravings) {
-          if (classEngravingMap[engraving.name]) {
-            character.classEngraving = engraving.name;
-            break;
-          }
-        }
-      }
-
-      // 하나라도 유효하지 않은 값이 있으면 null을 반환
-      for (let key in character) {
-        if (!character[key]) return null;
-      }
-
-      return character;
+      return CharacterBuilder(
+        this.parseCharacterProfile(result),
+        this.parseCharacterSetting(result),
+        this.parseCharacterSkill(result),
+      );
     } else {
       return null;
     }
@@ -267,7 +251,6 @@ export class LostarkService {
         characterName: ArmoryProfile.CharacterName,
         serverName: ArmoryProfile.ServerName,
         className: ArmoryProfile.CharacterClassName,
-        classEngraving: null,
         itemLevel: Number(ArmoryProfile.ItemAvgLevel.replace(',', '')),
       };
 
