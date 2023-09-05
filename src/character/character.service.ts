@@ -10,8 +10,19 @@ export class CharacterService {
     private readonly characterModel: Model<Character>,
   ) {}
 
+  async count() {
+    this.characterModel.countDocuments({});
+  }
+
   async findOneByCharacterName(characterName: string): Promise<Character> {
-    return await this.characterModel.findOne({ characterName });
+    return await this.characterModel.findOne(
+      { characterName },
+      {
+        _id: 0,
+        createdAt: 0,
+        updatedAt: 0,
+      },
+    );
   }
 
   async find(
