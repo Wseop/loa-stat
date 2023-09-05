@@ -37,7 +37,7 @@ export class NoticeInformService {
         await new Promise((_) => setTimeout(_, 1000 * 10));
       }
     }
-    this.logger.log(`NoticeId refreshed - ${this.lastNoticeId}`);
+    this.logger.log(`UPDATE | NoticeId - ${this.lastNoticeId}`);
   }
 
   // 디스코드 채널로 신규 공지 posting
@@ -63,7 +63,7 @@ export class NoticeInformService {
 
       if (this.lastNoticeId !== lastNoticeId) {
         this.lastNoticeId = lastNoticeId;
-        this.logger.log(`NoticeId updated - ${this.lastNoticeId}`);
+        this.logger.log(`UPDATE | NoticeId - ${this.lastNoticeId}`);
       }
     }
 

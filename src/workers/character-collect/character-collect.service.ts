@@ -112,7 +112,7 @@ export class CharacterCollectService {
     this.runUpsertCharacter();
 
     while (true) {
-      this.logger.log('===== CHARACTER-COLLECT START =====');
+      this.logger.log('START | CharacterCollect');
 
       for (let server of servers) {
         for (let classEngraving of classEngravings) {
@@ -120,7 +120,7 @@ export class CharacterCollectService {
         }
       }
 
-      this.logger.log('===== CHARACTER-COLLECT END =====');
+      this.logger.log('END | CharacterCollect');
       await new Promise((_) => setTimeout(_, 1000 * 60 * 60 * 24 * 7));
     }
   }

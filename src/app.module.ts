@@ -5,13 +5,11 @@ import { GoogleSheetModule } from './google-sheet/google-sheet.module';
 import { NecordModule } from 'necord';
 import { IntentsBitField } from 'discord.js';
 import { ChaosDungeonModule } from './chaos-dungeon/chaos-dungeon.module';
-import { ItemPriceModule } from './worker/item-price/item-price.module';
-import { NoticeInformModule } from './worker/notice-informer/notice-inform.module';
 import { GuardianModule } from './guardian/guardian.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CharacterModule } from './character/character.module';
-import { CharacterCollectModule } from './worker/character-collect/character-collect.module';
 import { StatisticsModule } from './statistics/statistics.module';
+import { WorkersModule } from './workers/workers.module';
 
 @Module({
   imports: [
@@ -25,15 +23,13 @@ import { StatisticsModule } from './statistics/statistics.module';
       development: [process.env.GUILD_ID],
     }),
     MongooseModule.forRoot(process.env.MONGODB_URI, { dbName: 'loa-stat' }),
-    CharacterModule,
-    StatisticsModule,
     GoogleSheetModule,
     LostarkModule,
+    CharacterModule,
+    StatisticsModule,
     ChaosDungeonModule,
     GuardianModule,
-    ItemPriceModule,
-    NoticeInformModule,
-    CharacterCollectModule,
+    WorkersModule,
   ],
 })
 export class AppModule {}

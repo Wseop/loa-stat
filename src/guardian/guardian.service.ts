@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { GoogleSheetService } from 'src/google-sheet/google-sheet.service';
-import { ItemPriceService } from 'src/worker/item-price/item-price.service';
+import { ItemPriceService } from 'src/workers/item-price/item-price.service';
 import { GuardianRewardDto } from './dtos/guardian-reward.dto';
 
 @Injectable()

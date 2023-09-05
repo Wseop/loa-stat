@@ -12,18 +12,18 @@ export class ItemPriceService {
   constructor(private readonly lostarkService: LostarkService) {
     setTimeout(async () => {
       await this.updateMarketItemPrice();
-      this.logger.log('MarketItemPrice initialized');
     }, 1000 * 5);
     setInterval(() => {
       this.updateMarketItemPrice();
+      this.logger.log('START | UpdateMarketItemPrice');
     }, 1000 * 60);
 
     setTimeout(async () => {
       await this.updateAuctionItemPrice();
-      this.logger.log('AuctionItemPrice initialized');
     }, 1000 * 5);
     setInterval(() => {
       this.updateAuctionItemPrice();
+      this.logger.log('START | UpdateAuctionItemPrice');
     }, 1000 * 60);
   }
 
