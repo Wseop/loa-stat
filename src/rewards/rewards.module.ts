@@ -1,13 +1,12 @@
 import { Module } from '@nestjs/common';
 import { GoogleSheetModule } from 'src/google-sheet/google-sheet.module';
-import { GuardianController } from './guardian.controller';
-import { GuardianService } from './guardian.service';
 import { MarketPriceModule } from 'src/market-price/market-price.module';
+import { RewardsController } from './rewards.controller';
+import { RewardsService } from './rewards.service';
 
 @Module({
   imports: [GoogleSheetModule, MarketPriceModule],
-  controllers: [GuardianController],
-  providers: [GuardianService],
-  exports: [GuardianService],
+  controllers: [RewardsController],
+  providers: [RewardsService],
 })
-export class GuardianModule {}
+export class RewardsModule {}

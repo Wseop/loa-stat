@@ -4,13 +4,12 @@ import { LostarkModule } from './lostark/lostark.module';
 import { GoogleSheetModule } from './google-sheet/google-sheet.module';
 import { NecordModule } from 'necord';
 import { IntentsBitField } from 'discord.js';
-import { ChaosDungeonModule } from './chaos-dungeon/chaos-dungeon.module';
-import { GuardianModule } from './guardian/guardian.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CharacterModule } from './character/character.module';
 import { StatisticsModule } from './statistics/statistics.module';
 import { WorkersModule } from './workers/workers.module';
 import { MarketPriceModule } from './market-price/market-price.module';
+import { RewardsModule } from './rewards/rewards.module';
 
 @Module({
   imports: [
@@ -26,10 +25,9 @@ import { MarketPriceModule } from './market-price/market-price.module';
     MongooseModule.forRoot(process.env.MONGODB_URI, { dbName: 'loa-stat' }),
     GoogleSheetModule,
     LostarkModule,
+    RewardsModule,
     CharacterModule,
     StatisticsModule,
-    ChaosDungeonModule,
-    GuardianModule,
     MarketPriceModule,
     WorkersModule,
   ],
