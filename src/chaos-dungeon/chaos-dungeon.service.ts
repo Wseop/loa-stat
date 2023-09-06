@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { GoogleSheetService } from 'src/google-sheet/google-sheet.service';
 import { ChaosRewardDto } from './dtos/chaos-reward.dto';
-import { ItemPriceService } from 'src/workers/item-price/item-price.service';
+import { MarketPriceService } from 'src/market-price/market-price.service';
 
 @Injectable()
 export class ChaosDungeonService {
@@ -9,7 +9,7 @@ export class ChaosDungeonService {
 
   constructor(
     private readonly googleSheetService: GoogleSheetService,
-    private readonly itemPriceService: ItemPriceService,
+    private readonly marketPriceService: MarketPriceService,
   ) {}
 
   private async getData(): Promise<any[][]> {
@@ -94,29 +94,29 @@ export class ChaosDungeonService {
         let itemPrice = 0;
 
         if (item === '명예의 파편 주머니(소)') {
-          itemPrice = this.itemPriceService.getMarketItemPrice(item);
+          itemPrice = this.marketPriceService.getItemPrice(item);
           if (itemPrice) {
             goldValue += (itemPrice / 500) * avgReward.shard;
           }
         } else if (item.includes('파괴강석')) {
-          itemPrice = this.itemPriceService.getMarketItemPrice(item);
+          itemPrice = this.marketPriceService.getItemPrice(item);
           if (itemPrice) {
             goldValue += (itemPrice / 10) * avgReward.destruction;
             tradableGoldValue += (itemPrice / 10) * avgReward.destruction;
           }
         } else if (item.includes('수호강석')) {
-          itemPrice = this.itemPriceService.getMarketItemPrice(item);
+          itemPrice = this.marketPriceService.getItemPrice(item);
           if (itemPrice) {
             goldValue += (itemPrice / 10) * avgReward.protection;
             tradableGoldValue += (itemPrice / 10) * avgReward.protection;
           }
         } else if (item.includes('돌파석')) {
-          itemPrice = this.itemPriceService.getMarketItemPrice(item);
+          itemPrice = this.marketPriceService.getItemPrice(item);
           if (itemPrice) {
             goldValue += itemPrice * avgReward.leap;
           }
         } else if (item === '1레벨 멸화의 보석') {
-          itemPrice = this.itemPriceService.getAuctionItemPrice(item);
+          itemPrice = this.marketPriceService.getItemPrice(item);
           if (itemPrice) {
             goldValue += itemPrice * avgReward.gem;
             tradableGoldValue += itemPrice * avgReward.gem;

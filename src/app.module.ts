@@ -10,6 +10,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { CharacterModule } from './character/character.module';
 import { StatisticsModule } from './statistics/statistics.module';
 import { WorkersModule } from './workers/workers.module';
+import { MarketPriceModule } from './market-price/market-price.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { WorkersModule } from './workers/workers.module';
     StatisticsModule,
     ChaosDungeonModule,
     GuardianModule,
+    MarketPriceModule,
     WorkersModule,
   ],
 })

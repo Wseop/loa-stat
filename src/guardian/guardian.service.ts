@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { GoogleSheetService } from 'src/google-sheet/google-sheet.service';
-import { ItemPriceService } from 'src/workers/item-price/item-price.service';
 import { GuardianRewardDto } from './dtos/guardian-reward.dto';
+import { MarketPriceService } from 'src/market-price/market-price.service';
 
 @Injectable()
 export class GuardianService {
@@ -9,7 +9,7 @@ export class GuardianService {
 
   constructor(
     private readonly googleSheetService: GoogleSheetService,
-    private readonly itemPriceService: ItemPriceService,
+    private readonly marketPriceService: MarketPriceService,
   ) {}
 
   private async getData(): Promise<any[][]> {
@@ -64,19 +64,19 @@ export class GuardianService {
         let itemPrice = 0;
 
         if (item.includes('파괴강석')) {
-          itemPrice = this.itemPriceService.getMarketItemPrice(item);
+          itemPrice = this.marketPriceService.getItemPrice(item);
           if (itemPrice) {
             goldValue += (itemPrice / 10) * avgReward.destruction;
             tradableGoldValue += (itemPrice / 10) * avgReward.destruction;
           }
         } else if (item.includes('수호강석')) {
-          itemPrice = this.itemPriceService.getMarketItemPrice(item);
+          itemPrice = this.marketPriceService.getItemPrice(item);
           if (itemPrice) {
             goldValue += (itemPrice / 10) * avgReward.protection;
             tradableGoldValue += (itemPrice / 10) * avgReward.protection;
           }
         } else if (item.includes('돌파석')) {
-          itemPrice = this.itemPriceService.getMarketItemPrice(item);
+          itemPrice = this.marketPriceService.getItemPrice(item);
           if (itemPrice) {
             goldValue += itemPrice * avgReward.leap;
             tradableGoldValue += itemPrice * avgReward.leap;
