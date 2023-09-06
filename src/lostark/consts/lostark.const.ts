@@ -9,7 +9,7 @@ export const servers: readonly string[] = [
   '니나브',
 ] as const;
 
-export const classMap: { [key: string]: readonly string[] } = {
+export const classMap: { readonly [key: string]: readonly string[] } = {
   버서커: ['광기', '광전사의 비기'],
   디스트로이어: ['분노의 망치', '중력 수련'],
   워로드: ['전투 태세', '고독한 기사'],
@@ -83,7 +83,7 @@ export const engravings: readonly string[] = [
   '아드레날린',
 ] as const;
 
-export const classEngravingMap: { [key: string]: string } = {
+export const classEngravingMap: { readonly [key: string]: string } = {
   피스메이커: '건슬링어',
   '사냥의 시간': '건슬링어',
   세맥타통: '기공사',
