@@ -1,4 +1,4 @@
-import { classEngravingMap } from 'src/lostark/resources/const';
+import { classEngravingMap } from 'src/lostark/consts/lostark.const';
 import { Character, Setting, Skill } from '../schemas/character.schema';
 
 export type Profile = Omit<Character, 'skills' | 'setting' | 'classEngraving'>;

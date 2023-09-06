@@ -1,4 +1,4 @@
-import { AuctionItemCategory } from '../resources/enum';
+import { AuctionItemCategory } from '../enums/lostark.enum';
 
 export interface RequestAuctionItem {
   categoryCode: AuctionItemCategory;

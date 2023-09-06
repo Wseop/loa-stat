@@ -12,8 +12,8 @@ import {
   Setting,
   Skill,
 } from '../character/schemas/character.schema';
-import { MarketItemId } from './resources/enum';
-import { sets } from './resources/const';
+import { MarketItemId } from './enums/lostark.enum';
+import { sets } from './consts/lostark.const';
 import {
   CharacterBuilder,
   Profile,

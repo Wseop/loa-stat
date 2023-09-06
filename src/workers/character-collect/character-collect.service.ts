@@ -2,12 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import axios from 'axios';
 import { CharacterService } from 'src/character/character.service';
 import { Character } from 'src/character/schemas/character.schema';
+import { classMap, servers } from 'src/lostark/consts/lostark.const';
 import { LostarkService } from 'src/lostark/lostark.service';
-import {
-  classEngravingMap,
-  classMap,
-  servers,
-} from 'src/lostark/resources/const';
 
 @Injectable()
 export class CharacterCollectService {

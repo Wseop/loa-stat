@@ -1,4 +1,4 @@
-import { classEngravingMap, servers } from 'src/lostark/resources/const';
+import { classEngravingMap, servers } from 'src/lostark/consts/lostark.const';
 
 export class CharacterStatistics {
   protected total: number;
