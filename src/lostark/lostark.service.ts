@@ -106,7 +106,7 @@ export class LostarkService {
   async getNotices(): Promise<LostarkNotice[]> {
     const result = await this.get('/news/notices');
 
-    if (result) {
+    if (result?.length > 0) {
       const notices: LostarkNotice[] = [];
 
       result.forEach(
