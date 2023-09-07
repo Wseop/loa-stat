@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import axios from 'axios';
 import { CharacterService } from 'src/character/character.service';
+import { ValidateCharacter } from 'src/character/functions/character.functions';
 import { Character } from 'src/character/schemas/character.schema';
 import { classMap, servers } from 'src/lostark/consts/lostark.const';
 import { LostarkService } from 'src/lostark/lostark.service';
@@ -108,8 +109,10 @@ export class CharacterCollectService {
       const character = this.characterQueue.shift();
 
       if (character) {
-        await this.characterService.upsert(character);
-        upsertCount++;
+        if (ValidateCharacter(character)) {
+          await this.characterService.upsert(character);
+          upsertCount++;
+        }
       } else {
         // 큐가 비어있으면 대기
         this.logger.debug(`UPSERT | ${upsertCount} data`);

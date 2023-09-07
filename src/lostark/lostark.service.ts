@@ -267,11 +267,6 @@ export class LostarkService {
         engravings: this.parseEngraving(ArmoryEngraving),
       };
 
-      // 하나라도 유효하지 않은 값이 있으면 null을 반환
-      for (let key in result) {
-        if (!result[key]) return null;
-      }
-
       return result;
     } else {
       return null;
@@ -463,10 +458,6 @@ export class LostarkService {
       result.push(armorySkill[skillName]);
     }
 
-    if (result.length > 0) {
-      return result;
-    } else {
-      return null;
-    }
+    return result;
   }
 }
