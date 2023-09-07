@@ -6,6 +6,5 @@ import { MarketPriceModule } from 'src/market-price/market-price.module';
 @Module({
   imports: [LostarkModule, MarketPriceModule],
   providers: [ItemPriceService],
-  exports: [ItemPriceService],
 })
 export class ItemPriceModule {}

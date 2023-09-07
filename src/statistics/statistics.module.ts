@@ -7,6 +7,5 @@ import { StatisticsController } from './statistics.controller';
   imports: [CharacterModule],
   controllers: [StatisticsController],
   providers: [StatisticsService],
-  exports: [StatisticsService],
 })
 export class StatisticsModule {}

@@ -6,6 +6,5 @@ import { CharacterModule } from 'src/character/character.module';
 @Module({
   imports: [LostarkModule, CharacterModule],
   providers: [CharacterCollectService],
-  exports: [CharacterCollectService],
 })
 export class CharacterCollectModule {}
