@@ -5,12 +5,20 @@ export class CharacterStatisticsDto extends CharacterStatistics {
   @ApiProperty({ type: Number })
   protected total: number;
 
-  @ApiProperty()
+  @ApiProperty({
+    type: Object,
+    properties: { serverName: { type: 'number' } },
+    example: { 루페온: 0 },
+  })
   protected server: {
     [key: string]: number;
   };
 
-  @ApiProperty()
+  @ApiProperty({
+    type: Object,
+    properties: { classEngravingName: { type: 'number' } },
+    example: { 광기: 0 },
+  })
   protected classEngraving: {
     [key: string]: number;
   };

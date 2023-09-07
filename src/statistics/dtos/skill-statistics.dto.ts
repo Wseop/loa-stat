@@ -5,6 +5,8 @@ export class SkillStatisticsDto extends SkillStatistics {
   @ApiProperty({ type: Number })
   protected total: number;
 
-  @ApiProperty()
+  @ApiProperty({
+    type: Object,
+  })
   protected skill: { [key: string]: SkillCount };
 }

@@ -2,12 +2,12 @@ import { ApiProperty } from '@nestjs/swagger';
 import { ItemPrice } from '../interfaces/item-price.interface';
 
 export class ItemPriceDto implements ItemPrice {
-  @ApiProperty()
+  @ApiProperty({ type: String })
   itemName: string;
 
-  @ApiProperty()
+  @ApiProperty({ type: Number })
   price: number;
 
-  @ApiProperty()
+  @ApiProperty({ type: String })
   updated: string;
 }
