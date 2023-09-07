@@ -50,4 +50,9 @@ export class CharacterService {
       },
     );
   }
+
+  async deleteOne(characterName: string): Promise<number> {
+    return (await this.characterModel.deleteOne({ characterName }))
+      .deletedCount;
+  }
 }
