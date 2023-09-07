@@ -51,22 +51,48 @@ export const GuardianRewardMap: {
   가르가디스: ['정제된 파괴강석', '정제된 수호강석', '찬란한 명예의 돌파석'],
 } as const;
 
-export const RewardKey: { readonly [key: string]: readonly string[] } = {
-  카오스던전: [
-    'silling',
-    'shard',
-    'destruction',
-    'protection',
-    'leap',
-    'gem',
-    'goldValue',
-    'tradableGoldValue',
+export const RewardItemKey: { readonly [key: string]: readonly string[] } = {
+  절망1: [
+    '실링',
+    '명예의 파편',
+    '파괴강석',
+    '수호강석',
+    '경이로운 명예의 돌파석',
+    '1레벨 보석',
   ],
-  가디언토벌: [
-    'destruction',
-    'protection',
-    'leap',
-    'goldValue',
-    'tradableGoldValue',
+  절망2: [
+    '실링',
+    '명예의 파편',
+    '파괴강석',
+    '수호강석',
+    '경이로운 명예의 돌파석',
+    '1레벨 보석',
   ],
+  천공1: [
+    '실링',
+    '명예의 파편',
+    '정제된 파괴강석',
+    '정제된 수호강석',
+    '찬란한 명예의 돌파석',
+    '1레벨 보석',
+  ],
+  천공2: [
+    '실링',
+    '명예의 파편',
+    '정제된 파괴강석',
+    '정제된 수호강석',
+    '찬란한 명예의 돌파석',
+    '1레벨 보석',
+  ],
+  계몽1: [
+    '실링',
+    '명예의 파편',
+    '정제된 파괴강석',
+    '정제된 수호강석',
+    '찬란한 명예의 돌파석',
+    '1레벨 보석',
+  ],
+  하누마탄: ['파괴강석', '수호강석', '경이로운 명예의 돌파석'],
+  소나벨: ['정제된 파괴강석', '정제된 수호강석', '찬란한 명예의 돌파석'],
+  가르가디스: ['정제된 파괴강석', '정제된 수호강석', '찬란한 명예의 돌파석'],
 } as const;

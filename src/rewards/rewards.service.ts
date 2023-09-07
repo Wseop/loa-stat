@@ -29,7 +29,7 @@ export class RewardsService {
 
       for (let level in rewards) {
         if (rewards[level].length === 0) continue;
-        result.push(new RewardDto(category, level, rewards[level]));
+        result.push(new RewardDto(level, rewards[level]));
       }
 
       return result;
