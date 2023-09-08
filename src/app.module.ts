@@ -10,9 +10,12 @@ import { StatisticsModule } from './statistics/statistics.module';
 import { WorkersModule } from './workers/workers.module';
 import { MarketPriceModule } from './market-price/market-price.module';
 import { RewardsModule } from './rewards/rewards.module';
+import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 
 @Module({
   imports: [
+    CacheModule.register(),
     ConfigModule.forRoot(),
     NecordModule.forRoot({
       token: process.env.BOT_TOKEN,
@@ -30,6 +33,12 @@ import { RewardsModule } from './rewards/rewards.module';
     StatisticsModule,
     MarketPriceModule,
     WorkersModule,
+  ],
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: CacheInterceptor,
+    },
   ],
 })
 export class AppModule {}
