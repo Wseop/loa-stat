@@ -59,4 +59,13 @@ export class SkillStatistics {
       else if (value === '홍염') skillCount.hong++;
     });
   }
+
+  sort() {
+    this.skill = Object.entries(this.skill)
+      .sort(([, a], [, b]) => b.count - a.count)
+      .reduce((r, [k, v]) => {
+        r[k] = v;
+        return r;
+      }, {});
+  }
 }

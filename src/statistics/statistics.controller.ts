@@ -1,26 +1,36 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
 import { StatisticsService } from './statistics.service';
-import { CharacterStatisticsDto } from './dtos/character-statistics.dto';
 import { SettingStatisticsDto } from './dtos/setting-statistics.dto';
 import { SkillStatisticsDto } from './dtos/skill-statistics.dto';
 import { StatisticsQueryDto } from './dtos/statistics-query.dto';
+import { ServerStatisticsDto } from './dtos/server-statistics.dto';
+import { ClassEngravingStatisticsDto } from './dtos/class-engraving-statistics.dto';
 
 @ApiTags('[Statistics]')
 @Controller('statistics')
 export class StatisticsController {
   constructor(private readonly statisticsService: StatisticsService) {}
 
-  @Get('/character')
-  @ApiOkResponse({ type: CharacterStatisticsDto })
-  getCharacterStatistics(@Query() query: StatisticsQueryDto) {
-    return this.statisticsService.getCharacterStatistics(
+  @Get('/character/server')
+  @ApiOkResponse({ type: ServerStatisticsDto })
+  getServerStatistics(@Query() query: StatisticsQueryDto) {
+    return this.statisticsService.getServerStatistics(
       query.minItemLevel,
       query.maxItemLevel,
     );
   }
 
-  @Get('/setting/:classEngraving')
+  @Get('/character/classEngraving')
+  @ApiOkResponse({ type: ClassEngravingStatisticsDto })
+  getClassEngravingStatistics(@Query() query: StatisticsQueryDto) {
+    return this.statisticsService.getClassEngravingStatistics(
+      query.minItemLevel,
+      query.maxItemLevel,
+    );
+  }
+
+  @Get('/character/setting/:classEngraving')
   @ApiOkResponse({ type: SettingStatisticsDto })
   @ApiParam({ name: 'classEngraving', required: true, example: '광기' })
   getSettingStatistics(
@@ -34,7 +44,7 @@ export class StatisticsController {
     );
   }
 
-  @Get('/skill/:classEngraving')
+  @Get('/character/skill/:classEngraving')
   @ApiOkResponse({ type: SkillStatisticsDto })
   @ApiParam({ name: 'classEngraving', required: true, example: '광기' })
   getSkillStatistics(

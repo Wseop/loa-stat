@@ -35,4 +35,33 @@ export class SettingStatistics {
       this.engraving[level - 1][engraving] = 0;
     this.engraving[level - 1][engraving]++;
   }
+
+  sort() {
+    this.stat = Object.entries(this.stat)
+      .sort(([, a], [, b]) => b - a)
+      .reduce((r, [k, v]) => {
+        r[k] = v;
+        return r;
+      }, {});
+    this.set = Object.entries(this.set)
+      .sort(([, a], [, b]) => b - a)
+      .reduce((r, [k, v]) => {
+        r[k] = v;
+        return r;
+      }, {});
+    this.elixir = Object.entries(this.elixir)
+      .sort(([, a], [, b]) => b - a)
+      .reduce((r, [k, v]) => {
+        r[k] = v;
+        return r;
+      }, {});
+    this.engraving.forEach((engraving, i) => {
+      this.engraving[i] = Object.entries(engraving)
+        .sort(([, a], [, b]) => b - a)
+        .reduce((r, [k, v]) => {
+          r[k] = v;
+          return r;
+        }, {});
+    });
+  }
 }

@@ -10,12 +10,12 @@ import { StatisticsModule } from './statistics/statistics.module';
 import { WorkersModule } from './workers/workers.module';
 import { MarketPriceModule } from './market-price/market-price.module';
 import { RewardsModule } from './rewards/rewards.module';
-import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
-import { APP_INTERCEPTOR } from '@nestjs/core';
+import { CacheModule } from '@nestjs/cache-manager';
+import { RedisClientOptions } from 'redis';
+import * as redisStore from 'cache-manager-redis-store';
 
 @Module({
   imports: [
-    CacheModule.register(),
     ConfigModule.forRoot(),
     NecordModule.forRoot({
       token: process.env.BOT_TOKEN,
@@ -26,6 +26,11 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
       development: [process.env.GUILD_ID],
     }),
     MongooseModule.forRoot(process.env.MONGODB_URI, { dbName: 'loa-stat' }),
+    CacheModule.register<RedisClientOptions>({
+      store: redisStore,
+      url: 'redis://redis:6379',
+      isGlobal: true,
+    }),
     GoogleSheetModule,
     LostarkModule,
     RewardsModule,
@@ -33,12 +38,6 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
     StatisticsModule,
     MarketPriceModule,
     WorkersModule,
-  ],
-  providers: [
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: CacheInterceptor,
-    },
   ],
 })
 export class AppModule {}
