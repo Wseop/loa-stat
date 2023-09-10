@@ -17,7 +17,7 @@ export class CharacterUpdateService {
   }
 
   private async getCharacterNames(): Promise<string[]> {
-    const result = await this.characterService.find(null, ['characterName']);
+    const result = await this.characterService.findFromCache(['characterName']);
 
     if (result)
       return result.map((value) => {
