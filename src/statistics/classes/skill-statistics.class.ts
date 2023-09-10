@@ -67,5 +67,26 @@ export class SkillStatistics {
         r[k] = v;
         return r;
       }, {});
+
+    for (let skill in this.skill) {
+      this.skill[skill].level = Object.entries(this.skill[skill].level)
+        .sort(([, a], [, b]) => b - a)
+        .reduce((r, [k, v]) => {
+          r[k] = v;
+          return r;
+        }, {});
+      this.skill[skill].tripod = Object.entries(this.skill[skill].tripod)
+        .sort(([, a], [, b]) => b - a)
+        .reduce((r, [k, v]) => {
+          r[k] = v;
+          return r;
+        }, {});
+      this.skill[skill].rune = Object.entries(this.skill[skill].rune)
+        .sort(([, a], [, b]) => b - a)
+        .reduce((r, [k, v]) => {
+          r[k] = v;
+          return r;
+        }, {});
+    }
   }
 }
