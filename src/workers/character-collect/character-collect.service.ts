@@ -93,7 +93,8 @@ export class CharacterCollectService {
         const character =
           await this.lostarkService.searchCharacter(characterName);
 
-        if (character) this.characterQueue.push(character);
+        if (character && !Number.isInteger(character))
+          this.characterQueue.push(character);
       } else {
         // 큐가 비어있으면 대기
         await new Promise((_) => setTimeout(_, 1000 * 60));

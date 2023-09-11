@@ -29,7 +29,7 @@ export class CharacterUpdateService {
     const result = await this.lostarkService.searchCharacter(characterName);
 
     // 검증 후 upsert
-    if (result) {
+    if (result && !Number.isInteger(result)) {
       if (ValidateCharacter(result)) {
         await this.characterService.upsert(result);
       }

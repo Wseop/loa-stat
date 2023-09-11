@@ -224,6 +224,9 @@ export class LostarkService {
       );
     }
 
+    // API서버 error (서버점검 등) 일 경우 null대신 상태코드 반환
+    if (Number.isInteger(result)) return result;
+
     if (result) {
       return CharacterBuilder(
         this.parseCharacterProfile(result),
