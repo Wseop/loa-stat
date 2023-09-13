@@ -8,6 +8,7 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 @Injectable()
 export class CharacterService {
   private readonly logger: Logger = new Logger(CharacterService.name);
+  private addRequestQ: string[] = [];
 
   constructor(
     @InjectModel(Character.name)
@@ -16,6 +17,9 @@ export class CharacterService {
     private readonly cacheManager: Cache,
   ) {}
 
+  ////////////////////
+  // CharacterModel //
+  ////////////////////
   async findOneByCharacterName(characterName: string): Promise<Character> {
     return await this.characterModel.findOne(
       { characterName },
@@ -101,5 +105,19 @@ export class CharacterService {
   async deleteOne(characterName: string): Promise<number> {
     return (await this.characterModel.deleteOne({ characterName }))
       .deletedCount;
+  }
+
+  //////////////
+  // RequestQ //
+  //////////////
+  addRequest(characterName: string) {
+    this.addRequestQ.push(characterName);
+    this.logger.debug(`Add request - ${characterName}`);
+  }
+
+  popRequest(): string {
+    const characterName = this.addRequestQ.shift();
+    if (characterName) this.logger.debug(`Pop request - ${characterName}`);
+    return characterName;
   }
 }

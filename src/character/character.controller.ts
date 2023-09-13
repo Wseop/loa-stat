@@ -1,4 +1,11 @@
-import { Controller, Get, Logger, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  HttpStatus,
+  Logger,
+  Param,
+  Post,
+} from '@nestjs/common';
 import { ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
 import { CharacterService } from './character.service';
 import { CharacterDto } from './dtos/character.dto';
@@ -20,5 +27,13 @@ export class CharacterController {
   })
   getCharacter(@Param('characterName') characterName: string) {
     return this.characterService.findOneByCharacterName(characterName);
+  }
+
+  @Post('/add/:characterName')
+  @ApiOkResponse()
+  @ApiParam({ name: 'characterName', type: String, required: true })
+  addRequest(@Param('characterName') characterName: string) {
+    this.characterService.addRequest(characterName);
+    return HttpStatus.OK;
   }
 }

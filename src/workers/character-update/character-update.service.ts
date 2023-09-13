@@ -41,16 +41,30 @@ export class CharacterUpdateService {
     }
   }
 
-  private async run() {
-    this.logger.log('START | CharacterUpdate');
-
+  private async updateFromDB() {
     while (true) {
       const characterNames = await this.getCharacterNames();
-
       while (characterNames.length > 0) {
         await this.updateCharacter(characterNames.pop());
         await new Promise((_) => setTimeout(_, 1000));
       }
+      await new Promise((_) => setTimeout(_, 1000 * 60 * 60 * 24));
     }
+  }
+
+  private async updateFromRequest() {
+    while (true) {
+      const characterName = this.characterService.popRequest();
+      if (characterName) {
+        await this.updateCharacter(characterName);
+        await new Promise((_) => setTimeout(_, 1000));
+      } else await new Promise((_) => setTimeout(_, 1000 * 60 * 5));
+    }
+  }
+
+  private async run() {
+    this.updateFromDB();
+    this.updateFromRequest();
+    this.logger.log('START | CharacterUpdate');
   }
 }
