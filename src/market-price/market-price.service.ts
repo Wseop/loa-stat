@@ -26,7 +26,9 @@ export class MarketPriceService {
     this.marketPrice[category] = itemPrices;
 
     itemPrices.forEach((itemPrice) => {
-      this.itemPrice[itemPrice.itemName] = itemPrice.price;
+      // 가격 정보가 존재하는 경우에만 업데이트
+      if (itemPrice.price > 0)
+        this.itemPrice[itemPrice.itemName] = itemPrice.price;
     });
   }
 }
