@@ -72,6 +72,7 @@ export class LostarkService {
         return error.response.status;
       } else if (error.request) this.logger.error(error.request);
       else this.logger.error(error.message);
+      return null;
     }
   }
 
@@ -97,6 +98,7 @@ export class LostarkService {
         return error.response.status;
       } else if (error.request) this.logger.error(error.request);
       else this.logger.error(error.message);
+      return null;
     }
   }
 
@@ -210,22 +212,26 @@ export class LostarkService {
   ///////////////
   // CHARACTER //
   ///////////////
-  async searchCharacter(characterName: string): Promise<Character> {
+  async searchCharacter(characterName: string): Promise<Character | number> {
     let result = await this.get(
       `/armories/characters/${characterName}?filters=profiles%2Bequipment%2Bengravings%2Bcombat-skills%2Bgems`,
     );
 
-    // API limit 걸린경우 1분후 재시도
-    while (result === 429) {
-      this.logger.warn('Rate Limit Exceeded - Retry after 1minute');
-      await new Promise((_) => setTimeout((_) => 1000 * 60));
-      result = await this.get(
-        `/armories/characters/${characterName}?filters=profiles%2Bequipment%2Bengravings%2Bcombat-skills%2Bgems`,
-      );
+    // 상태코드가 반환된 경우
+    while (Number.isInteger(result)) {
+      // 429 재시도
+      if (result === 429) {
+        this.logger.warn('Rate Limit Exceeded - Retry after 1minute');
+        await new Promise((_) => setTimeout((_) => 1000 * 60));
+        result = await this.get(
+          `/armories/characters/${characterName}?filters=profiles%2Bequipment%2Bengravings%2Bcombat-skills%2Bgems`,
+        );
+      }
+      // 그 외 상태코드 반환
+      else {
+        return result;
+      }
     }
-
-    // API서버 error (서버점검 등) 일 경우 null대신 상태코드 반환
-    if (Number.isInteger(result)) return result;
 
     if (result) {
       return CharacterBuilder(

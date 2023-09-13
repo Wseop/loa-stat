@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { CharacterService } from 'src/character/character.service';
 import { ValidateCharacter } from 'src/character/functions/character.functions';
+import { Character } from 'src/character/schemas/character.schema';
 import { LostarkService } from 'src/lostark/lostark.service';
 
 @Injectable()
@@ -28,13 +29,13 @@ export class CharacterUpdateService {
   private async updateCharacter(characterName: string) {
     const result = await this.lostarkService.searchCharacter(characterName);
 
-    // 검증 후 upsert
-    if (result && !Number.isInteger(result)) {
-      if (ValidateCharacter(result)) {
-        await this.characterService.upsert(result);
+    if (result) {
+      // 정상적인 캐릭터 정보인 경우 upsert
+      if (!Number.isInteger(result) && ValidateCharacter(result as Character)) {
+        await this.characterService.upsert(result as Character);
       }
     } else {
-      // 더 이상 존재하지 않는 캐릭터면 db에서 삭제
+      // 존재하지 않는 캐릭터면 db에서 삭제
       await this.characterService.deleteOne(characterName);
       this.logger.debug(`DELETE | ${characterName}`);
     }
