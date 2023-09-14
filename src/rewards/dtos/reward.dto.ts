@@ -5,8 +5,13 @@ export class RewardDto extends Reward {
   @ApiProperty({ type: String })
   protected level: string;
 
+  @ApiProperty({ type: Number })
+  protected total: number;
+
   @ApiProperty({ type: Object })
-  protected items: { [item: string]: number };
+  protected reward: {
+    [itemName: string]: { avg: number; min: number; max: number };
+  };
 
   @ApiProperty({ type: Number })
   protected tradableGoldValue: number;

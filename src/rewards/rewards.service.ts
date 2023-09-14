@@ -21,18 +21,35 @@ export class RewardsService {
     const data = await this.getData(category);
 
     if (data) {
-      const rewards = this.calcGoldValue(
+      const levels =
+        category === RewardsCategory.카오스던전
+          ? Object.keys(ChaosDungeonRewardMap)
+          : Object.keys(GuardianRewardMap);
+      const { total, rewardMin, rewardMax, rewardAvg } = this.classifyData(
         category,
-        this.calcAvgData(category, data),
+        data,
       );
-      const result = [];
+      const goldValue = this.calcGoldValue(category, rewardAvg);
 
-      for (let level in rewards) {
-        if (rewards[level].length === 0) continue;
-        result.push(new RewardDto(level, rewards[level]));
-      }
-
-      return result;
+      // Reward 생성
+      const rewards: RewardDto[] = [];
+      levels.forEach((level) => {
+        if (total[level] > 0) {
+          const reward = new RewardDto(
+            level,
+            total[level],
+            goldValue[level].tradableGoldValue,
+            goldValue[level].goldValue,
+          );
+          reward.setReward(
+            rewardMin[level],
+            rewardMax[level],
+            rewardAvg[level],
+          );
+          rewards.push(reward);
+        }
+      });
+      return rewards;
     } else {
       return null;
     }
@@ -51,53 +68,87 @@ export class RewardsService {
     }
   }
 
-  private calcAvgData(category: RewardsCategory, data: any[][]) {
-    const sum: { [level: string]: number[] } = {};
-    const avg: { [level: string]: number[] } = {};
-    const columnCount = data[0].length;
+  private classifyData(category: RewardsCategory, data: any[][]) {
+    const total: { [level: string]: number } = {};
+    const rewardSum: { [level: string]: number[] } = {};
+    const rewardMin: { [level: string]: number[] } = {};
+    const rewardMax: { [level: string]: number[] } = {};
+    const rewardAvg: { [level: string]: number[] } = {};
     const levels =
       category === RewardsCategory.카오스던전
         ? Object.keys(ChaosDungeonRewardMap)
         : Object.keys(GuardianRewardMap);
 
-    // sum, avg 초기화
+    // 변수 초기화
     levels.forEach((level) => {
-      sum[level] = Array.from({ length: columnCount - 1 }, () => 0);
-      avg[level] = [];
+      total[level] = 0;
+      rewardSum[level] = Array.from({ length: data[0].length - 2 }, () => 0);
+      rewardMin[level] = Array.from(
+        { length: data[0].length - 2 },
+        () => Number.MAX_SAFE_INTEGER,
+      );
+      rewardMax[level] = Array.from(
+        { length: data[0].length - 2 },
+        () => Number.MIN_SAFE_INTEGER,
+      );
     });
 
-    // calc sum
+    // 누적 데이터, min, max 계산
     for (let i = 1; i < data.length; i++) {
-      if (data[i].length !== columnCount) continue;
-      for (let j = 1; j < columnCount; j++) {
-        sum[data[i][0]][j - 1] += Number(data[i][j].replace(',', ''));
+      const level = data[i][0];
+      const count = Number(data[i][1]);
+
+      total[level] += count;
+      for (let j = 2; j < data[i].length; j++) {
+        const singleValue = Math.floor(
+          Number(data[i][j].replace(',', '')) / count,
+        );
+
+        rewardSum[level][j - 2] += Number(data[i][j].replace(',', ''));
+        rewardMin[level][j - 2] =
+          rewardMin[level][j - 2] < singleValue
+            ? rewardMin[level][j - 2]
+            : singleValue;
+        rewardMax[level][j - 2] =
+          rewardMax[level][j - 2] < singleValue
+            ? singleValue
+            : rewardMax[level][j - 2];
       }
     }
-
-    // calc avg
-    for (let level in sum) {
-      const count = sum[level][0];
-
-      if (count === 0) continue;
-      for (let i = 1; i < columnCount - 1; i++) {
-        avg[level].push(sum[level][i] / count);
-      }
+    // 누적 데이터로 평균 데이터 계산
+    for (let level in rewardSum) {
+      rewardAvg[level] = rewardSum[level].map((value) => {
+        return value / total[level];
+      });
     }
 
-    return avg;
+    return {
+      total,
+      rewardMin,
+      rewardMax,
+      rewardAvg,
+    };
   }
 
   private calcGoldValue(
     category: RewardsCategory,
     avg: { [level: string]: number[] },
-  ) {
+  ): {
+    [level: string]: {
+      goldValue: number;
+      tradableGoldValue: number;
+    };
+  } {
     const rewardMap =
       category === RewardsCategory.카오스던전
         ? ChaosDungeonRewardMap
         : GuardianRewardMap;
-    const result: { [level: string]: number[] } = JSON.parse(
-      JSON.stringify(avg),
-    );
+    const result: {
+      [level: string]: {
+        goldValue: number;
+        tradableGoldValue: number;
+      };
+    } = {};
 
     for (let level in avg) {
       let goldValue = 0;
@@ -128,8 +179,10 @@ export class RewardsService {
         }
       });
 
-      if (goldValue && tradableGoldValue)
-        result[level].push(goldValue, tradableGoldValue);
+      result[level] = {
+        goldValue,
+        tradableGoldValue,
+      };
     }
 
     return result;
