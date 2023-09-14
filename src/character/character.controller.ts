@@ -29,7 +29,7 @@ export class CharacterController {
     return this.characterService.findOneByCharacterName(characterName);
   }
 
-  @Post('/add/:characterName')
+  @Post('/:characterName')
   @ApiOkResponse()
   @ApiParam({ name: 'characterName', type: String, required: true })
   addRequest(@Param('characterName') characterName: string) {
