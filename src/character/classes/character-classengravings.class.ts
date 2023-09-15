@@ -1,6 +1,6 @@
 import { classEngravingMap } from 'src/lostark/consts/lostark.const';
 
-export class ClassEngravingStatistics {
+export class CharacterClassEngravings {
   protected total: number;
   protected classEngraving: { [classEngravingName: string]: number };
 

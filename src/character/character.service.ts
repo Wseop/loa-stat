@@ -4,6 +4,10 @@ import { FilterQuery, Model, ProjectionType } from 'mongoose';
 import { Character } from './schemas/character.schema';
 import { Cache } from 'cache-manager';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { CharacterServersDto } from './dtos/character-servers.dto';
+import { CharacterClassEngravingsDto } from './dtos/character-classengravings.dto';
+import { CharacterSettingsDto } from './dtos/character-settings.dto';
+import { CharacterSkillsDto } from './dtos/character-skills.dto';
 
 @Injectable()
 export class CharacterService {
@@ -49,12 +53,18 @@ export class CharacterService {
   }
 
   async findFromCache(
+    minItemLevel: number,
+    maxItemLevel: number,
     fields: string[],
     classEngraving?: string,
   ): Promise<Character[]> {
-    // field + classEngraving으로 redisKey생성
+    // RedisKey생성 (classEngraving + fields + itemLevel)
     let redisKey = classEngraving ? classEngraving : '';
     fields.forEach((field) => (redisKey += field));
+    redisKey += 'itemLevel';
+
+    // itemLevel 필드는 필수로 포함
+    if (!fields.includes('itemLevel')) fields.push('itemLevel');
 
     if (redisKey) {
       let result: Character[] = await this.cacheManager.get(redisKey);
@@ -66,7 +76,16 @@ export class CharacterService {
         else result = await this.find(null, fields);
         this.cacheManager.set(redisKey, result, { ttl: 60 * 10 });
       }
-      return result;
+      // itemLevel로 필터링
+      return result
+        .map((value) => {
+          if (
+            value.itemLevel >= minItemLevel &&
+            value.itemLevel <= maxItemLevel
+          )
+            return value;
+        })
+        .filter((e) => e);
     } else {
       this.logger.error('RedisKey is null');
       return null;
@@ -119,5 +138,97 @@ export class CharacterService {
     const characterName = this.addRequestQ.shift();
     if (characterName) this.logger.debug(`Pop request - ${characterName}`);
     return characterName;
+  }
+
+  ////////////////////////////////////////////
+  // 캐릭터 통계 (서버, 직각, 세팅, 스킬세팅) //
+  ///////////////////////////////////////////
+  async getCharacterServers(
+    minItemLevel: number,
+    maxItemLevel: number,
+  ): Promise<CharacterServersDto> {
+    const data = await this.findFromCache(
+      minItemLevel,
+      maxItemLevel,
+      ['serverName'],
+      null,
+    );
+    if (!data) return null;
+
+    const result = new CharacterServersDto(data.length);
+    data.forEach((value) => {
+      result.addServerCount(value.serverName);
+    });
+    result.sort();
+    return result;
+  }
+
+  async getCharacterClassEngravings(
+    minItemLevel: number,
+    maxItemLevel: number,
+  ): Promise<CharacterClassEngravingsDto> {
+    const data = await this.findFromCache(
+      minItemLevel,
+      maxItemLevel,
+      ['classEngraving'],
+      null,
+    );
+    if (!data) return null;
+
+    const result = new CharacterClassEngravingsDto(data.length);
+    data.forEach((value) => {
+      result.addClassEngravingCount(value.classEngraving);
+    });
+    result.sort();
+    return result;
+  }
+
+  async getCharacterSettings(
+    minItemLevel: number,
+    maxItemLevel: number,
+    classEngraving: string,
+  ): Promise<CharacterSettingsDto> {
+    const data = await this.findFromCache(
+      minItemLevel,
+      maxItemLevel,
+      ['setting'],
+      classEngraving,
+    );
+    if (!data) return null;
+
+    const result = new CharacterSettingsDto(data.length);
+    data.forEach((value) => {
+      result.addStatCount(value.setting.stat);
+      result.addSetCount(value.setting.set);
+      result.addElixirCount(value.setting.elixir);
+      value.setting.engravings.forEach((engraving) => {
+        result.addEngravingCount(engraving.name, engraving.level);
+      });
+    });
+    result.sort();
+    return result;
+  }
+
+  async getCharacterSkills(
+    minItemLevel: number,
+    maxItemLevel: number,
+    classEngraving: string,
+  ): Promise<CharacterSkillsDto> {
+    const data = await this.findFromCache(
+      minItemLevel,
+      maxItemLevel,
+      ['skills'],
+      classEngraving,
+    );
+    if (!data) return null;
+
+    const result = new CharacterSkillsDto(data.length);
+    data.forEach((value) => {
+      value.skills.forEach((skill) => {
+        result.addSkillCount(skill);
+      });
+    });
+    result.sort();
+    return result;
   }
 }

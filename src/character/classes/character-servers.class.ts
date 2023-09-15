@@ -1,6 +1,6 @@
 import { servers } from 'src/lostark/consts/lostark.const';
 
-export class ServerStatistics {
+export class CharacterServers {
   protected total: number;
   protected server: { [serverName: string]: number };
 

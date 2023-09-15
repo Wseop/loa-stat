@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ServerStatistics } from '../classes/server-statistics.class';
+import { CharacterServers } from '../classes/character-servers.class';
 
-export class ServerStatisticsDto extends ServerStatistics {
+export class CharacterServersDto extends CharacterServers {
   @ApiProperty({ type: Number })
   protected total: number;
 

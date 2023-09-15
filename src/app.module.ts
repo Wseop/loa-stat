@@ -6,7 +6,6 @@ import { NecordModule } from 'necord';
 import { IntentsBitField } from 'discord.js';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CharacterModule } from './character/character.module';
-import { StatisticsModule } from './statistics/statistics.module';
 import { WorkersModule } from './workers/workers.module';
 import { MarketPriceModule } from './market-price/market-price.module';
 import { RewardsModule } from './rewards/rewards.module';
@@ -35,7 +34,6 @@ import * as redisStore from 'cache-manager-redis-store';
     LostarkModule,
     RewardsModule,
     CharacterModule,
-    StatisticsModule,
     MarketPriceModule,
     WorkersModule,
   ],

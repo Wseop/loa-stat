@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ClassEngravingStatistics } from '../classes/class-engraving-statistics.class';
+import { CharacterClassEngravings } from '../classes/character-classengravings.class';
 
-export class ClassEngravingStatisticsDto extends ClassEngravingStatistics {
+export class CharacterClassEngravingsDto extends CharacterClassEngravings {
   @ApiProperty({ type: Number })
   protected total: number;
 

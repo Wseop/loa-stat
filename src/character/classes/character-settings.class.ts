@@ -1,4 +1,4 @@
-export class SettingStatistics {
+export class CharacterSettings {
   protected total: number;
   protected stat: { [key: string]: number };
   protected set: { [key: string]: number };

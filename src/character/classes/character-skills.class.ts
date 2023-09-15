@@ -9,7 +9,7 @@ export type SkillCount = {
   hong: number;
 };
 
-export class SkillStatistics {
+export class CharacterSkills {
   protected total: number;
   protected skill: { [key: string]: SkillCount };
 
