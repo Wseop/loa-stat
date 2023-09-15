@@ -1,12 +1,15 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { GoogleSheetService } from 'src/google-sheet/google-sheet.service';
 import { MarketPriceService } from 'src/market-price/market-price.service';
 import { RewardsCategory } from './enums/rewards.enum';
 import {
   ChaosDungeonRewardMap,
+  DataRange,
   GuardianRewardMap,
 } from './consts/rewards.const';
 import { RewardDto } from './dtos/reward.dto';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 
 @Injectable()
 export class RewardsService {
@@ -15,10 +18,12 @@ export class RewardsService {
   constructor(
     private readonly googleSheetService: GoogleSheetService,
     private readonly marketPriceService: MarketPriceService,
+    @Inject(CACHE_MANAGER)
+    private readonly cacheManager: Cache,
   ) {}
 
   async getRewards(category: RewardsCategory): Promise<RewardDto[]> {
-    const data = await this.getData(category);
+    const data = await this.getDataFromCache(category);
 
     if (data) {
       const levels =
@@ -53,6 +58,17 @@ export class RewardsService {
     } else {
       return null;
     }
+  }
+
+  private async getDataFromCache(category: RewardsCategory): Promise<any[][]> {
+    let data: any[][] = await this.cacheManager.get(DataRange[category]);
+    if (!data) {
+      // cache miss
+      data = await this.getData(category);
+      this.cacheManager.set(DataRange[category], data, { ttl: 60 * 60 * 24 });
+      this.logger.debug(`cache update - ${DataRange[category]}`);
+    }
+    return data;
   }
 
   private async getData(category: RewardsCategory): Promise<any[][]> {
