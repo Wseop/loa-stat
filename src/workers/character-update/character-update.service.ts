@@ -59,6 +59,7 @@ export class CharacterUpdateService {
       const characterName = this.characterService.popRequest();
       if (characterName) {
         await this.updateCharacter(characterName);
+        this.logger.log(`UPDATE | ${characterName}`);
         await new Promise((_) => setTimeout(_, 1000));
       } else await new Promise((_) => setTimeout(_, 1000 * 60 * 5));
     }
