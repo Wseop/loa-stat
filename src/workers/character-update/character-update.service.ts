@@ -60,7 +60,7 @@ export class CharacterUpdateService {
       if (characterName) {
         await this.updateCharacter(characterName);
         this.logger.log(`UPDATE | ${characterName}`);
-        await new Promise((_) => setTimeout(_, 1000));
+        await new Promise((_) => setTimeout(_, 100));
       } else await new Promise((_) => setTimeout(_, 1000 * 60 * 5));
     }
   }
