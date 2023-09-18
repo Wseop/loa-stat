@@ -7,8 +7,18 @@
 ## File Tree
 ```bash
 📦src
- ┣ 📂character ------------------------------------- 로스트아크 캐릭터 DB 담당
+ ┣ 📂character ------------------------------------- 로스트아크 캐릭터 DB 관리
+ ┃ ┣ 📂classes
+ ┃ ┃ ┣ 📜character-classengravings.class.ts
+ ┃ ┃ ┣ 📜character-servers.class.ts
+ ┃ ┃ ┣ 📜character-settings.class.ts
+ ┃ ┃ ┗ 📜character-skills.class.ts
  ┃ ┣ 📂dtos
+ ┃ ┃ ┣ 📜character-classengravings.dto.ts
+ ┃ ┃ ┣ 📜character-query.dto.ts
+ ┃ ┃ ┣ 📜character-servers.dto.ts
+ ┃ ┃ ┣ 📜character-settings.dto.ts
+ ┃ ┃ ┣ 📜character-skills.dto.ts
  ┃ ┃ ┗ 📜character.dto.ts
  ┃ ┣ 📂functions
  ┃ ┃ ┗ 📜character.functions.ts
@@ -20,7 +30,7 @@
  ┣ 📂google-sheet ---------------------------------- 구글 스프레드 시트 연동 (GoogleSheet API 사용)
  ┃ ┣ 📜google-sheet.module.ts
  ┃ ┗ 📜google-sheet.service.ts
- ┣ 📂lostark --------------------------------------- 로스트아크 API Wrapper 모듈 (API key 관리 등)
+ ┣ 📂lostark --------------------------------------- 로스트아크 API Wrapper (API key 관리 등)
  ┃ ┣ 📂consts
  ┃ ┃ ┗ 📜lostark.const.ts
  ┃ ┣ 📂enums
@@ -30,7 +40,7 @@
  ┃ ┃ ┗ 📜lostark-notice.interface.ts
  ┃ ┣ 📜lostark.module.ts
  ┃ ┗ 📜lostark.service.ts
- ┣ 📂market-price ---------------------------------- 아이템 시세 담당
+ ┣ 📂market-price ---------------------------------- 아이템 시세 관리
  ┃ ┣ 📂dtos
  ┃ ┃ ┗ 📜item-price.dto.ts
  ┃ ┣ 📂enums
@@ -40,7 +50,7 @@
  ┃ ┣ 📜market-price.controller.ts
  ┃ ┣ 📜market-price.module.ts
  ┃ ┗ 📜market-price.service.ts
- ┣ 📂rewards --------------------------------------- 컨텐츠 보상 담당
+ ┣ 📂rewards --------------------------------------- 컨텐츠 보상 관리
  ┃ ┣ 📂classes
  ┃ ┃ ┗ 📜reward.class.ts
  ┃ ┣ 📂consts
@@ -52,30 +62,12 @@
  ┃ ┣ 📜rewards.controller.ts
  ┃ ┣ 📜rewards.module.ts
  ┃ ┗ 📜rewards.service.ts
- ┣ 📂statistics ------------------------------------ 특정 기준에 맞춰 누적 데이터 등을 제공 (현재는 Character관련 기능만 제공)
- ┃ ┣ 📂classes
- ┃ ┃ ┣ 📜class-engraving-statistics.class.ts
- ┃ ┃ ┣ 📜server-statistics.class.ts
- ┃ ┃ ┣ 📜setting-statistics.class.ts
- ┃ ┃ ┗ 📜skill-statistics.class.ts
- ┃ ┣ 📂dtos
- ┃ ┃ ┣ 📜class-engraving-statistics.dto.ts
- ┃ ┃ ┣ 📜server-statistics.dto.ts
- ┃ ┃ ┣ 📜setting-statistics.dto.ts
- ┃ ┃ ┣ 📜skill-statistics.dto.ts
- ┃ ┃ ┗ 📜statistics-query.dto.ts
- ┃ ┣ 📜statistics.controller.ts
- ┃ ┣ 📜statistics.module.ts
- ┃ ┗ 📜statistics.service.ts
  ┣ 📂utils
  ┃ ┗ 📜date.ts
  ┣ 📂workers --------------------------------------- 원활한 서비스 제공을 위해 주기적으로 실행되는 모듈들
  ┃ ┣ 📂cache-warmer -------------------------------- Redis cache warming
  ┃ ┃ ┣ 📜cache-warmer.module.ts
  ┃ ┃ ┗ 📜cache-warmer.service.ts
- ┃ ┣ 📂character-collect --------------------------- 로스트아크 캐릭터명 scrapper
- ┃ ┃ ┣ 📜character-collect.module.ts
- ┃ ┃ ┗ 📜character-collect.service.ts
  ┃ ┣ 📂character-update ---------------------------- Character database의 데이터를 주기적으로 갱신
  ┃ ┃ ┣ 📜character-update.module.ts
  ┃ ┃ ┗ 📜character-update.service.ts
