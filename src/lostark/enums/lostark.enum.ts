@@ -31,3 +31,13 @@ export const AuctionItemCategory = {
 } as const;
 export type AuctionItemCategory =
   (typeof AuctionItemCategory)[keyof typeof AuctionItemCategory];
+
+export const MarketItemCategory = {
+  각인서: 40000,
+  '강화 재료': 50000,
+  '재련 재료': 50010,
+  '재련 추가 재료': 50020,
+  '기타 재료': 51000,
+} as const;
+export type MarketItemCategory =
+  (typeof MarketItemCategory)[keyof typeof MarketItemCategory];
