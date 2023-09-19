@@ -23,6 +23,7 @@ export class ItemPriceService {
         this.updateReforge(),
         this.updateGem(),
         this.updateEsther(),
+        this.updateEngravingBook(),
       ]);
       this.logger.debug('UPDATE | Item price');
     }, 1000 * 5);
@@ -30,6 +31,7 @@ export class ItemPriceService {
       this.updateReforge();
       this.updateGem();
       this.updateEsther();
+      this.updateEngravingBook();
     }, 1000 * 60);
   }
 
@@ -51,31 +53,27 @@ export class ItemPriceService {
       '최상급 오레하 융화 재료',
     ];
     const currentDate = getCurrentDate();
-    const result: ItemPrice[] = await Promise.all(
-      items.map(async (item) => {
-        return {
-          itemName: item,
-          price: await this.lostarkService.getAvgPrice(MarketItemId[item]),
-          updated: currentDate,
-        };
-      }),
-    );
 
-    this.marketPriceService.updatePrice(MarketPriceCategory.Reforge, result);
+    items.forEach(async (itemName) => {
+      const price = await this.lostarkService.getAvgPrice(
+        MarketItemId[itemName],
+      );
+      this.marketPriceService.updatePrice({
+        itemName,
+        price,
+        updated: currentDate,
+      });
+    });
   }
 
   private async updateEsther() {
-    const itemPrice: ItemPrice = {
+    this.marketPriceService.updatePrice({
       itemName: '에스더의 기운',
       price: await this.lostarkService.getAvgPrice(
         MarketItemId['에스더의 기운'],
       ),
       updated: getCurrentDate(),
-    };
-
-    this.marketPriceService.updatePrice(MarketPriceCategory.Esther, [
-      itemPrice,
-    ]);
+    });
   }
 
   private async updateGem() {
@@ -95,22 +93,17 @@ export class ItemPriceService {
       });
     }
 
-    const result: ItemPrice[] = await Promise.all(
-      requests.map(async (request) => {
-        const auctionItem =
-          await this.lostarkService.searchAuctionItem(request);
-        const itemPrice: ItemPrice = {
-          itemName: request.itemName,
-          price: -1,
+    requests.forEach(async (request) => {
+      const auctionItem = await this.lostarkService.searchAuctionItem(request);
+      if (auctionItem?.buyPrice) {
+        this.marketPriceService.updatePrice({
+          itemName: auctionItem.itemName,
+          price: auctionItem.buyPrice,
           updated: currentDate,
-        };
-
-        if (auctionItem) itemPrice.price = auctionItem.buyPrice;
-
-        return itemPrice;
-      }),
-    );
-
-    this.marketPriceService.updatePrice(MarketPriceCategory.Gem, result);
+        });
+      }
+    });
   }
+
+  private async updateEngravingBook() {}
 }

@@ -176,21 +176,21 @@ export class RewardsService {
 
         if (itemPrice) {
           if (itemName === '명예의 파편 주머니(소)') {
-            goldValue += (itemPrice / 500) * value;
+            goldValue += (itemPrice.price / 500) * value;
           } else if (itemName.includes('파괴강석')) {
-            goldValue += (itemPrice / 10) * value;
-            tradableGoldValue += (itemPrice / 10) * value;
+            goldValue += (itemPrice.price / 10) * value;
+            tradableGoldValue += (itemPrice.price / 10) * value;
           } else if (itemName.includes('수호강석')) {
-            goldValue += (itemPrice / 10) * value;
-            tradableGoldValue += (itemPrice / 10) * value;
+            goldValue += (itemPrice.price / 10) * value;
+            tradableGoldValue += (itemPrice.price / 10) * value;
           } else if (itemName.includes('돌파석')) {
-            goldValue += itemPrice * value;
+            goldValue += itemPrice.price * value;
             if (category === RewardsCategory.가디언토벌) {
-              tradableGoldValue += itemPrice * value;
+              tradableGoldValue += itemPrice.price * value;
             }
           } else if (itemName === '1레벨 멸화의 보석') {
-            goldValue += itemPrice * value;
-            tradableGoldValue += itemPrice * value;
+            goldValue += itemPrice.price * value;
+            tradableGoldValue += itemPrice.price * value;
           }
         }
       });
