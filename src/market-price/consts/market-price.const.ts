@@ -1,4 +1,7 @@
-import { engravings } from 'src/lostark/consts/lostark.const';
+import {
+  classEngravingMap,
+  engravings,
+} from 'src/lostark/consts/lostark.const';
 
 export const itemList: {
   readonly [key: string]: readonly string[];
@@ -27,8 +30,12 @@ export const itemList: {
       return `${gemLevel}레벨 홍염의 보석`;
     }
   }),
-  각인서: Array.from(engravings, (v, i) => {
-    return `${v} 각인서`;
-  }),
+  각인서: Array.from(
+    [...engravings, ...Object.keys(classEngravingMap)],
+    (v, i) => {
+      if (engravings.includes(v)) return `${v} 각인서`;
+      else return `[${classEngravingMap[v]}] ${v} 각인서`;
+    },
+  ),
   '에스더의 기운': ['에스더의 기운'],
 } as const;
