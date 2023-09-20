@@ -12,12 +12,16 @@ import {
   Setting,
   Skill,
 } from '../character/schemas/character.schema';
-import { MarketItemId } from './enums/lostark.enum';
+import { MarketItemCategory, MarketItemId } from './enums/lostark.enum';
 import { sets } from './consts/lostark.const';
 import {
   CharacterBuilder,
   Profile,
 } from 'src/character/functions/character.functions';
+import {
+  MarketItem,
+  RequestMarketItem,
+} from './interfaces/lostark-market.interface';
 
 @Injectable()
 export class LostarkService {
@@ -157,6 +161,45 @@ export class LostarkService {
     if (result?.length > 0 && result[0].Stats?.length > 0)
       return result[0].Stats[0].AvgPrice;
     else return null;
+  }
+
+  async searchMarketItems(request: RequestMarketItem): Promise<MarketItem[]> {
+    const marketItems: MarketItem[] = [];
+    let result = await this.post('/markets/items', {
+      Sort: 'CURRENT_MIN_PRICE',
+      CategoryCode: request.categoryCode,
+      CharacterClass: request.characterClass,
+      ItemGrade: request.itemGrade,
+      ItemName: request.itemName,
+      PageNo: request.pageNo,
+      SortCondition: 'ASC',
+    });
+    const pageSize = Number(result.PageSize);
+
+    // 전체 페이지 검색
+    while (result && request.pageNo <= pageSize) {
+      result.Items.forEach((item) => {
+        marketItems.push({
+          itemName: item.Name,
+          itemGrade: item.Grade,
+          iconPath: item.Icon,
+          minPrice: item.CurrentMinPrice,
+        });
+      });
+
+      request.pageNo++;
+      result = await this.post('/markets/items', {
+        Sort: 'CURRENT_MIN_PRICE',
+        CategoryCode: request.categoryCode,
+        CharacterClass: request.characterClass,
+        ItemGrade: request.itemGrade,
+        ItemName: request.itemName,
+        PageNo: request.pageNo,
+        SortCondition: 'ASC',
+      });
+    }
+
+    return marketItems;
   }
 
   /////////////

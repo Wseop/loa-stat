@@ -12,7 +12,7 @@ export class MarketPriceController {
   @Get('/:category')
   @ApiOkResponse({ type: [ItemPriceDto] })
   @ApiParam({ name: 'category', required: true, enum: MarketPriceCategory })
-  getMarketPrice(@Param('category') category: MarketPriceCategory) {
-    return this.marketPriceService.getMarketPrice(category);
+  getCategoryPrice(@Param('category') category: MarketPriceCategory) {
+    return this.marketPriceService.getCategoryPrice(category);
   }
 }
