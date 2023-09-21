@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ItemPrice } from './interfaces/item-price.interface';
 import { MarketPriceCategory } from './enums/market-price.enum';
-import { itemList } from './consts/market-price.const';
+import { MarketPriceMap } from './consts/market-price.const';
 
 @Injectable()
 export class MarketPriceService {
@@ -17,7 +17,7 @@ export class MarketPriceService {
   getCategoryPrice(category: MarketPriceCategory): ItemPrice[] {
     const itemPrices: ItemPrice[] = [];
 
-    itemList[category].forEach((itemName) => {
+    MarketPriceMap[category].forEach((itemName) => {
       itemPrices.push(this.itemPrice[itemName]);
     });
 

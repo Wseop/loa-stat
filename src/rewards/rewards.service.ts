@@ -4,12 +4,12 @@ import { MarketPriceService } from 'src/market-price/market-price.service';
 import { RewardsCategory } from './enums/rewards.enum';
 import {
   ChaosDungeonRewardMap,
-  DataRange,
   GuardianRewardMap,
 } from './consts/rewards.const';
 import { RewardDto } from './dtos/reward.dto';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
+import { SheetMap } from 'src/google-sheet/consts/sheet.const';
 
 @Injectable()
 export class RewardsService {
@@ -61,12 +61,12 @@ export class RewardsService {
   }
 
   private async getDataFromCache(category: RewardsCategory): Promise<any[][]> {
-    let data: any[][] = await this.cacheManager.get(DataRange[category]);
+    let data: any[][] = await this.cacheManager.get(SheetMap[category]);
     if (!data) {
       // cache miss
       data = await this.getData(category);
-      this.cacheManager.set(DataRange[category], data, { ttl: 60 * 60 * 24 });
-      this.logger.debug(`cache update - ${DataRange[category]}`);
+      this.cacheManager.set(SheetMap[category], data, { ttl: 60 * 60 * 24 });
+      this.logger.debug(`cache update - ${SheetMap[category]}`);
     }
     return data;
   }

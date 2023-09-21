@@ -1,4 +1,4 @@
-import { classEngravingMap } from 'src/lostark/consts/lostark.const';
+import { ClassEngravingMap } from 'src/lostark/consts/engraving.const';
 import { Character, Setting, Skill } from '../schemas/character.schema';
 
 export type Profile = Omit<Character, 'skills' | 'setting' | 'classEngraving'>;
@@ -13,7 +13,7 @@ export const CharacterBuilder = (
 
     if (setting?.engravings) {
       for (let engraving of setting.engravings) {
-        if (classEngravingMap[engraving.name]) {
+        if (ClassEngravingMap[engraving.name]) {
           classEngraving = engraving.name;
           break;
         }

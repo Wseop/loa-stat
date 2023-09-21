@@ -1,43 +1,4 @@
-export const servers: readonly string[] = [
-  '루페온',
-  '아만',
-  '카단',
-  '카제로스',
-  '카마인',
-  '아브렐슈드',
-  '실리안',
-  '니나브',
-] as const;
-
-export const classMap: { readonly [key: string]: readonly string[] } = {
-  버서커: ['광기', '광전사의 비기'],
-  디스트로이어: ['분노의 망치', '중력 수련'],
-  워로드: ['전투 태세', '고독한 기사'],
-  홀리나이트: ['축복의 오라', '심판자'],
-  슬레이어: ['처단자', '포식자'],
-  배틀마스터: ['오의 강화', '초심'],
-  인파이터: ['극의: 체술', '충격 단련'],
-  기공사: ['세맥타통', '역천지체'],
-  창술사: ['절정', '절제'],
-  스트라이커: ['일격필살', '오의난무'],
-  블레이드: ['잔재된 기운', '버스트'],
-  데모닉: ['완벽한 억제', '멈출 수 없는 충동'],
-  리퍼: ['갈증', '달의 소리'],
-  소울이터: ['만월의 집행자', '그믐의 경계'],
-  호크아이: ['두 번째 동료', '죽음의 습격'],
-  데빌헌터: ['핸드거너', '강화 무기'],
-  블래스터: ['화력 강화', '포격 강화'],
-  스카우터: ['아르데타인의 기술', '진화의 유산'],
-  건슬링어: ['피스메이커', '사냥의 시간'],
-  아르카나: ['황후의 은총', '황제의 칙령'],
-  서머너: ['상급 소환사', '넘치는 교감'],
-  바드: ['절실한 구원', '진실된 용맹'],
-  소서리스: ['점화', '환류'],
-  도화가: ['만개', '회귀'],
-  기상술사: ['질풍노도', '이슬비'],
-} as const;
-
-export const engravings: readonly string[] = [
+export const Engravings: readonly string[] = [
   '원한',
   '중갑 착용',
   '실드 관통',
@@ -83,7 +44,7 @@ export const engravings: readonly string[] = [
   '아드레날린',
 ] as const;
 
-export const classEngravingMap: { readonly [key: string]: string } = {
+export const ClassEngravingMap: { readonly [key: string]: string } = {
   피스메이커: '건슬링어',
   '사냥의 시간': '건슬링어',
   세맥타통: '기공사',
@@ -135,13 +96,3 @@ export const classEngravingMap: { readonly [key: string]: string } = {
   심판자: '홀리나이트',
   '축복의 오라': '홀리나이트',
 } as const;
-
-// 유효 세트만 사용
-export const sets: readonly string[] = [
-  '구원',
-  '악몽',
-  '사멸',
-  '지배',
-  '갈망',
-  '환각',
-];

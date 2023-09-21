@@ -1,4 +1,4 @@
-import { servers } from 'src/lostark/consts/lostark.const';
+import { Servers } from 'src/lostark/consts/server.const';
 
 export class CharacterServers {
   protected total: number;
@@ -8,7 +8,7 @@ export class CharacterServers {
     // 변수 초기화
     this.total = total;
     this.server = {};
-    servers.forEach((server) => {
+    Servers.forEach((server) => {
       this.server[server] = 0;
     });
   }

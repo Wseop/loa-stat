@@ -1,4 +1,4 @@
-import { MarketItemCategory } from '../enums/lostark.enum';
+import { MarketItemCategory } from '../enums/market.enum';
 
 export interface RequestMarketItem {
   categoryCode: MarketItemCategory;

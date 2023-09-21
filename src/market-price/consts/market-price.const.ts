@@ -1,9 +1,9 @@
 import {
-  classEngravingMap,
-  engravings,
-} from 'src/lostark/consts/lostark.const';
+  ClassEngravingMap,
+  Engravings,
+} from 'src/lostark/consts/engraving.const';
 
-export const itemList: {
+export const MarketPriceMap: {
   readonly [key: string]: readonly string[];
 } = {
   '재련 재료': [
@@ -31,10 +31,10 @@ export const itemList: {
     }
   }),
   각인서: Array.from(
-    [...engravings, ...Object.keys(classEngravingMap)],
+    [...Engravings, ...Object.keys(ClassEngravingMap)],
     (v, i) => {
-      if (engravings.includes(v)) return `${v} 각인서`;
-      else return `[${classEngravingMap[v]}] ${v} 각인서`;
+      if (Engravings.includes(v)) return `${v} 각인서`;
+      else return `[${ClassEngravingMap[v]}] ${v} 각인서`;
     },
   ),
   '에스더의 기운': ['에스더의 기운'],

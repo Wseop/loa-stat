@@ -1,3 +1,13 @@
+export const MarketItemCategory = {
+  각인서: 40000,
+  '강화 재료': 50000,
+  '재련 재료': 50010,
+  '재련 추가 재료': 50020,
+  '기타 재료': 51000,
+} as const;
+export type MarketItemCategory =
+  (typeof MarketItemCategory)[keyof typeof MarketItemCategory];
+
 export const MarketItemId = {
   파괴강석: 66102004,
   '정제된 파괴강석': 66102005,
@@ -18,26 +28,3 @@ export const MarketItemId = {
   '최상급 오레하 융화 재료': 6861011,
 } as const;
 export type MarketItemId = (typeof MarketItemId)[keyof typeof MarketItemId];
-
-export const AuctionItemCategory = {
-  아뮬렛: 170300,
-  '어빌리티 스톤': 30000,
-  장신구: 200000,
-  목걸이: 200010,
-  귀걸이: 200020,
-  반지: 200030,
-  팔찌: 200040,
-  보석: 210000,
-} as const;
-export type AuctionItemCategory =
-  (typeof AuctionItemCategory)[keyof typeof AuctionItemCategory];
-
-export const MarketItemCategory = {
-  각인서: 40000,
-  '강화 재료': 50000,
-  '재련 재료': 50010,
-  '재련 추가 재료': 50020,
-  '기타 재료': 51000,
-} as const;
-export type MarketItemCategory =
-  (typeof MarketItemCategory)[keyof typeof MarketItemCategory];

@@ -12,8 +12,6 @@ import {
   Setting,
   Skill,
 } from '../character/schemas/character.schema';
-import { MarketItemCategory, MarketItemId } from './enums/lostark.enum';
-import { sets } from './consts/lostark.const';
 import {
   CharacterBuilder,
   Profile,
@@ -22,6 +20,8 @@ import {
   MarketItem,
   RequestMarketItem,
 } from './interfaces/lostark-market.interface';
+import { Sets } from './consts/equipment.const';
+import { MarketItemId } from './enums/market.enum';
 
 @Injectable()
 export class LostarkService {
@@ -362,7 +362,7 @@ export class LostarkService {
   }
 
   private parseSet(equipments): string {
-    const setCounts = sets.map((value) => {
+    const setCounts = Sets.map((value) => {
       return { set: value, count: 0 };
     });
     let count = 0;
@@ -380,8 +380,8 @@ export class LostarkService {
           isEstherWeapon = true;
           count++;
         } else {
-          for (let i = 0; i < sets.length; i++) {
-            if (name.includes(sets[i])) {
+          for (let i = 0; i < Sets.length; i++) {
+            if (name.includes(Sets[i])) {
               setCounts[i].count++;
               count++;
             }
@@ -394,8 +394,8 @@ export class LostarkService {
         type === '장갑' ||
         type === '어깨'
       ) {
-        for (let i = 0; i < sets.length; i++) {
-          if (name.includes(sets[i])) {
+        for (let i = 0; i < Sets.length; i++) {
+          if (name.includes(Sets[i])) {
             setCounts[i].count++;
             count++;
             if (type === '장갑') handSet = i;

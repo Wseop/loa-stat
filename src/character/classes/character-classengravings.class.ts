@@ -1,4 +1,4 @@
-import { classEngravingMap } from 'src/lostark/consts/lostark.const';
+import { ClassEngravingMap } from 'src/lostark/consts/engraving.const';
 
 export class CharacterClassEngravings {
   protected total: number;
@@ -8,7 +8,7 @@ export class CharacterClassEngravings {
     // 변수 초기화
     this.total = total;
     this.classEngraving = {};
-    for (let classEngraving in classEngravingMap) {
+    for (let classEngraving in ClassEngravingMap) {
       this.classEngraving[classEngraving] = 0;
     }
   }

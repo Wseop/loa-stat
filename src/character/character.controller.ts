@@ -15,7 +15,7 @@ import { CharacterQueryDto } from './dtos/character-query.dto';
 import { CharacterClassEngravingsDto } from './dtos/character-classengravings.dto';
 import { CharacterSettingsDto } from './dtos/character-settings.dto';
 import { CharacterSkillsDto } from './dtos/character-skills.dto';
-import { classEngravingMap } from 'src/lostark/consts/lostark.const';
+import { ClassEngravingMap } from 'src/lostark/consts/engraving.const';
 
 @ApiTags('[Characters]')
 @Controller('characters')
@@ -67,7 +67,7 @@ export class CharacterController {
   @ApiParam({
     name: 'classEngraving',
     required: true,
-    enum: Object.keys(classEngravingMap),
+    enum: Object.keys(ClassEngravingMap),
   })
   getCharacterSettings(
     @Param('classEngraving') classEngraving: string,
@@ -85,7 +85,7 @@ export class CharacterController {
   @ApiParam({
     name: 'classEngraving',
     required: true,
-    enum: Object.keys(classEngravingMap),
+    enum: Object.keys(ClassEngravingMap),
   })
   getCharacterSkills(
     @Param('classEngraving') classEngraving: string,

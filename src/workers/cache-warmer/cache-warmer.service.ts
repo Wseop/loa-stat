@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { CharacterService } from 'src/character/character.service';
-import { classEngravingMap } from 'src/lostark/consts/lostark.const';
+import { ClassEngravingMap } from 'src/lostark/consts/engraving.const';
 
 @Injectable()
 export class CacheWarmerService {
@@ -24,7 +24,7 @@ export class CacheWarmerService {
         0,
       );
       // setting & skills
-      for (let classEngraving in classEngravingMap) {
+      for (let classEngraving in ClassEngravingMap) {
         await this.characterService.setCache(
           ['setting', 'itemLevel'],
           classEngraving,
