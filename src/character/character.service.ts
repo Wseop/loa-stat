@@ -201,9 +201,7 @@ export class CharacterService {
       result.addStatCount(value.setting.stat);
       result.addSetCount(value.setting.set);
       result.addElixirCount(value.setting.elixir);
-      value.setting.engravings.forEach((engraving) => {
-        result.addEngravingCount(engraving.name, engraving.level);
-      });
+      result.setEngraving(value.setting.engravings);
     });
     result.sort();
     return result;

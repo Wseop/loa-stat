@@ -1,18 +1,19 @@
+import { EngravingCode } from 'src/lostark/consts/engraving.const';
+import { Engraving } from '../schemas/character.schema';
+
 export class CharacterSettings {
   protected total: number;
   protected stat: { [key: string]: number };
   protected set: { [key: string]: number };
   protected elixir: { [key: string]: number };
-  protected engraving: { [key: string]: number }[];
+  protected engraving: { [key: string]: number };
 
   constructor(total: number) {
     this.total = total;
     this.stat = {};
     this.set = {};
     this.elixir = {};
-    this.engraving = Array.from({ length: 3 }, () => {
-      return {};
-    });
+    this.engraving = {};
   }
 
   addStatCount(stat: string) {
@@ -30,10 +31,48 @@ export class CharacterSettings {
     this.elixir[elixir]++;
   }
 
-  addEngravingCount(engraving: string, level: number) {
-    if (!this.engraving[level - 1][engraving])
-      this.engraving[level - 1][engraving] = 0;
-    this.engraving[level - 1][engraving]++;
+  setEngraving(engravings: Engraving[]) {
+    // 각인 레벨별로 분류
+    const engravingLevel1: Engraving[] = [];
+    const engravingLevel2: Engraving[] = [];
+    const engravingLevel3: Engraving[] = [];
+    engravings.forEach((engraving) => {
+      if (engraving.level === 1) engravingLevel1.push(engraving);
+      else if (engraving.level === 2) engravingLevel2.push(engraving);
+      else if (engraving.level === 3) engravingLevel3.push(engraving);
+    });
+
+    // 각인코드로 정렬
+    engravingLevel1.sort(
+      (a, b) => EngravingCode[a.name] - EngravingCode[b.name],
+    );
+    engravingLevel2.sort(
+      (a, b) => EngravingCode[a.name] - EngravingCode[b.name],
+    );
+    engravingLevel3.sort(
+      (a, b) => EngravingCode[a.name] - EngravingCode[b.name],
+    );
+
+    // key 생성
+    let engravingKey = '';
+    let levelKey = '';
+    engravingLevel3.forEach((engraving) => {
+      engravingKey += engraving.name[0];
+      levelKey += '3';
+    });
+    engravingLevel2.forEach((engraving) => {
+      engravingKey += engraving.name[0];
+      levelKey += '2';
+    });
+    engravingLevel1.forEach((engraving) => {
+      engravingKey += engraving.name[0];
+      levelKey += '1';
+    });
+
+    // 추가
+    const key = `${engravingKey}[${levelKey}]`;
+    if (!this.engraving[key]) this.engraving[key] = 0;
+    this.engraving[key]++;
   }
 
   sort() {
@@ -55,13 +94,11 @@ export class CharacterSettings {
         r[k] = v;
         return r;
       }, {});
-    this.engraving.forEach((engraving, i) => {
-      this.engraving[i] = Object.entries(engraving)
-        .sort(([, a], [, b]) => b - a)
-        .reduce((r, [k, v]) => {
-          r[k] = v;
-          return r;
-        }, {});
-    });
+    this.engraving = Object.entries(this.engraving)
+      .sort(([, a], [, b]) => b - a)
+      .reduce((r, [k, v]) => {
+        r[k] = v;
+        return r;
+      }, {});
   }
 }

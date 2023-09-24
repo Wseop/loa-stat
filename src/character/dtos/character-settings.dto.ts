@@ -36,19 +36,6 @@ export class CharacterSettingsDto extends CharacterSettings {
 
   @ApiProperty({
     type: [Object],
-    example: [
-      {
-        '에테르 포식자': 0,
-      },
-      {
-        '저주받은 인형': 0,
-      },
-      {
-        원한: 0,
-      },
-    ],
   })
-  protected engraving: {
-    [key: string]: number;
-  }[];
+  protected engraving: { [key: string]: number };
 }
