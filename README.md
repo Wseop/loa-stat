@@ -28,19 +28,28 @@
  ┃ ┣ 📜character.module.ts
  ┃ ┗ 📜character.service.ts
  ┣ 📂google-sheet ---------------------------------- 구글 스프레드 시트 연동 (GoogleSheet API 사용)
+ ┃ ┣ 📂consts
+ ┃ ┃ ┗ 📜sheet.const.ts
  ┃ ┣ 📜google-sheet.module.ts
  ┃ ┗ 📜google-sheet.service.ts
  ┣ 📂lostark --------------------------------------- 로스트아크 API Wrapper (API key 관리 등)
  ┃ ┣ 📂consts
- ┃ ┃ ┗ 📜lostark.const.ts
+ ┃ ┃ ┣ 📜class.const.ts
+ ┃ ┃ ┣ 📜engraving.const.ts
+ ┃ ┃ ┣ 📜equipment.const.ts
+ ┃ ┃ ┗ 📜server.const.ts
  ┃ ┣ 📂enums
- ┃ ┃ ┗ 📜lostark.enum.ts
+ ┃ ┃ ┣ 📜auction.enum.ts
+ ┃ ┃ ┗ 📜market.enum.ts
  ┃ ┣ 📂interfaces
  ┃ ┃ ┣ 📜lostark-auction.interface.ts
+ ┃ ┃ ┣ 📜lostark-market.interface.ts
  ┃ ┃ ┗ 📜lostark-notice.interface.ts
  ┃ ┣ 📜lostark.module.ts
  ┃ ┗ 📜lostark.service.ts
  ┣ 📂market-price ---------------------------------- 아이템 시세 관리
+ ┃ ┣ 📂consts
+ ┃ ┃ ┗ 📜market-price.const.ts
  ┃ ┣ 📂dtos
  ┃ ┃ ┗ 📜item-price.dto.ts
  ┃ ┣ 📂enums
