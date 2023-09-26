@@ -98,14 +98,12 @@ export class RewardsService {
     // 변수 초기화
     levels.forEach((level) => {
       total[level] = 0;
-      rewardSum[level] = Array.from({ length: data[0].length - 2 }, () => 0);
-      rewardMin[level] = Array.from(
-        { length: data[0].length - 2 },
-        () => Number.MAX_SAFE_INTEGER,
+      rewardSum[level] = new Array(data[0].length - 2).fill(0);
+      rewardMin[level] = new Array(data[0].length - 2).fill(
+        Number.MAX_SAFE_INTEGER,
       );
-      rewardMax[level] = Array.from(
-        { length: data[0].length - 2 },
-        () => Number.MIN_SAFE_INTEGER,
+      rewardMax[level] = new Array(data[0].length - 2).fill(
+        Number.MIN_SAFE_INTEGER,
       );
     });
 

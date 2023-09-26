@@ -466,7 +466,7 @@ export class LostarkService {
   private parseCharacterSkill({ ArmorySkills, ArmoryGem }): Skill[] {
     const result: Skill[] = [];
     const armorySkill: { [skillName: string]: Skill } = {};
-    const gemSlot = Array.from({ length: 11 }, () => '');
+    const gemSlot: string[] = new Array(11).fill('');
 
     if (ArmorySkills && ArmoryGem) {
       // 채용한 스킬정보 parsing (4레벨 이상 혹은 룬을 착용한 스킬)

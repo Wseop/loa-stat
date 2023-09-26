@@ -22,17 +22,17 @@ export const MarketPriceMap: {
     '상급 오레하 융화 재료',
     '최상급 오레하 융화 재료',
   ],
-  보석: Array.from({ length: 20 }, (v, i) => {
+  보석: Array.from({ length: 20 }, (_, i) => {
     const gemLevel = Math.floor(i / 2) + 1;
     if (i & 1) {
-      return `${gemLevel}레벨 멸화의 보석`;
-    } else {
       return `${gemLevel}레벨 홍염의 보석`;
+    } else {
+      return `${gemLevel}레벨 멸화의 보석`;
     }
   }),
   각인서: Array.from(
     [...Engravings, ...Object.keys(ClassEngravingMap)],
-    (v, i) => {
+    (v) => {
       if (Engravings.includes(v)) return `${v} 각인서`;
       else return `[${ClassEngravingMap[v]}] ${v} 각인서`;
     },
