@@ -165,7 +165,22 @@ export class LostarkService {
 
   async searchMarketItems(request: RequestMarketItem): Promise<MarketItem[]> {
     const marketItems: MarketItem[] = [];
-    let result = await this.post('/markets/items', {
+    let result: {
+      PageNo: number;
+      PageSize: number;
+      TotalCout: number;
+      Items: {
+        Id: number;
+        Name: string;
+        Grade: string;
+        Icon: string;
+        BundleCount: number;
+        TradeRemainCount: number;
+        YDayAvgPrice: number;
+        RecentPrice: number;
+        CurrentMinPrice: number;
+      }[];
+    } = await this.post('/markets/items', {
       Sort: 'CURRENT_MIN_PRICE',
       CategoryCode: request.categoryCode,
       CharacterClass: request.characterClass,
@@ -206,7 +221,37 @@ export class LostarkService {
   // AUCTION //
   /////////////
   async searchAuctionItem(request: RequestAuctionItem): Promise<AuctionItem> {
-    const result = await this.post('/auctions/items', {
+    const result: {
+      PageNo: number;
+      PageSize: number;
+      TotalCount: number;
+      Items: {
+        Name: string;
+        Grade: string;
+        Tier: number;
+        Level: number;
+        Icon: string;
+        GradeQuality: number;
+        AuctionInfo: {
+          StartPrice: number;
+          BuyPrice: number;
+          BidPrice: number;
+          EndDate: string;
+          BidCount: number;
+          BidStartPrice: number;
+          IsCompetitive: boolean;
+          TradeAllowCount: number;
+        };
+        Options: {
+          Type: string;
+          OptionName: string;
+          OptionNameTripod: string;
+          Value: number;
+          IsPenalty: boolean;
+          ClassName: string;
+        }[];
+      }[];
+    } = await this.post('/auctions/items', {
       Sort: 'BUY_PRICE',
       ItemTier: 3,
       SortCondition: 'ASC',
@@ -231,7 +276,7 @@ export class LostarkService {
           auctionItem = {
             itemName: item.Name,
             itemGrade: item.Grade,
-            itemQuality: item.GradeQualty,
+            itemQuality: item.GradeQuality,
             options: item.Options.map((option) => {
               return {
                 optionName: option.OptionName,
@@ -325,7 +370,13 @@ export class LostarkService {
     }
   }
 
-  private parseStat(stats): string {
+  private parseStat(
+    stats: {
+      Type: string;
+      Value: string;
+      Tooltip: string[];
+    }[],
+  ): string {
     const statValues: { type: string; value: number }[] = stats
       .map((stat) => {
         const type = stat.Type;
@@ -361,7 +412,15 @@ export class LostarkService {
     }
   }
 
-  private parseSet(equipments): string {
+  private parseSet(
+    equipments: {
+      Type: string;
+      Name: string;
+      Icon: string;
+      Grade: string;
+      Tooltip: string;
+    }[],
+  ): string {
     const setCounts = Sets.map((value) => {
       return { set: value, count: 0 };
     });
@@ -421,7 +480,15 @@ export class LostarkService {
     return result;
   }
 
-  private parseElixir(equipments): string {
+  private parseElixir(
+    equipments: {
+      Type: string;
+      Name: string;
+      Icon: string;
+      Grade: string;
+      Tooltip: string;
+    }[],
+  ): string {
     let elixir = null;
 
     for (let equipment of equipments) {
@@ -451,11 +518,24 @@ export class LostarkService {
     return elixir;
   }
 
-  private parseEngraving(engravings): Engraving[] {
+  private parseEngraving(engravings: {
+    Engravings: {
+      Slot: number;
+      Name: string;
+      Icon: string;
+      Tooltip: string;
+    }[];
+    Effects: {
+      Name: string;
+      Description: string;
+    }[];
+  }): Engraving[] {
     const result: Engraving[] = engravings.Effects.map((engraving) => {
       const data = engraving.Name;
       const name = data.substring(0, data.indexOf('Lv.') - 1);
-      const level = data.substring(data.indexOf('Lv.') + 4, data.length);
+      const level = Number(
+        data.substring(data.indexOf('Lv.') + 4, data.length),
+      );
       return { name, level };
     });
 
@@ -470,40 +550,81 @@ export class LostarkService {
 
     if (ArmorySkills && ArmoryGem) {
       // 채용한 스킬정보 parsing (4레벨 이상 혹은 룬을 착용한 스킬)
-      ArmorySkills.forEach((skill) => {
-        if (skill.Level >= 4 || skill.Rune) {
-          armorySkill[skill.Name] = {
-            name: skill.Name,
-            level: skill.Level,
-            tripods: skill.Tripods.map((tripod) => {
-              if (tripod.IsSelected) return tripod.Name;
-            }).filter((e) => e),
-            rune: skill.Rune
-              ? {
-                  name: skill.Rune.Name,
-                  grade: skill.Rune.Grade,
-                }
-              : null,
-            gems: [],
+      ArmorySkills.forEach(
+        (skill: {
+          Name: string;
+          Icon: string;
+          Level: number;
+          Type: string;
+          IsAwakening: boolean;
+          Tripods: {
+            Tier: number;
+            Slot: number;
+            Name: string;
+            Icon: string;
+            Level: number;
+            IsSelected: boolean;
+            Tooltip: string;
+          }[];
+          Rune: {
+            Name: string;
+            Icon: string;
+            Grade: string;
+            Tooltip: string;
           };
-        }
-      });
+          Tooltip: string;
+        }) => {
+          if (skill.Level >= 4 || skill.Rune) {
+            armorySkill[skill.Name] = {
+              name: skill.Name,
+              level: skill.Level,
+              tripods: skill.Tripods.map((tripod) => {
+                if (tripod.IsSelected) return tripod.Name;
+              }).filter((e) => e),
+              rune: skill.Rune
+                ? {
+                    name: skill.Rune.Name,
+                    grade: skill.Rune.Grade,
+                  }
+                : null,
+              gems: [],
+            };
+          }
+        },
+      );
 
       // 채용한 스킬들의 보석정보 추가
-      ArmoryGem.Gems.forEach((gem) => {
-        gemSlot[gem.Slot] = gem.Name;
-      });
-      ArmoryGem.Effects.forEach((gemEffect) => {
-        if (armorySkill[gemEffect.Name]) {
-          const gemName = gemSlot[gemEffect.GemSlot];
+      ArmoryGem.Gems.forEach(
+        (gem: {
+          Slot: number;
+          Name: string;
+          Icon: string;
+          Level: number;
+          Grade: string;
+          Tooltip: string;
+        }) => {
+          gemSlot[gem.Slot] = gem.Name;
+        },
+      );
+      ArmoryGem.Effects.forEach(
+        (gemEffect: {
+          GemSlot: number;
+          Name: string;
+          Description: string;
+          Icon: string;
+          Tooltip: string;
+        }) => {
+          if (armorySkill[gemEffect.Name]) {
+            const gemName = gemSlot[gemEffect.GemSlot];
 
-          if (gemName.includes('멸화')) {
-            armorySkill[gemEffect.Name].gems.push('멸화');
-          } else if (gemName.includes('홍염')) {
-            armorySkill[gemEffect.Name].gems.push('홍염');
+            if (gemName.includes('멸화')) {
+              armorySkill[gemEffect.Name].gems.push('멸화');
+            } else if (gemName.includes('홍염')) {
+              armorySkill[gemEffect.Name].gems.push('홍염');
+            }
           }
-        }
-      });
+        },
+      );
     }
 
     for (let skillName in armorySkill) {

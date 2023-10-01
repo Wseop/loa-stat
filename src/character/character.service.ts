@@ -97,7 +97,7 @@ export class CharacterService {
     fields.forEach((field) => (redisKey += field));
 
     if (redisKey) {
-      let data;
+      let data: Character[];
       if (classEngraving) data = await this.find({ classEngraving }, fields);
       else data = await this.find(null, fields);
 
