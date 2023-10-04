@@ -192,7 +192,7 @@ export class LostarkService {
     const pageSize = Number(result.PageSize);
 
     // 전체 페이지 검색
-    while (result && request.pageNo <= pageSize) {
+    while (result?.Items?.length > 0 && request.pageNo <= pageSize) {
       result.Items.forEach((item) => {
         marketItems.push({
           itemName: item.Name,
