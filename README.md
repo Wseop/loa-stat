@@ -27,6 +27,8 @@
  ┃ ┣ 📜character.controller.ts
  ┃ ┣ 📜character.module.ts
  ┃ ┗ 📜character.service.ts
+ ┣ 📂config
+ ┃ ┗ 📜configuration.ts
  ┣ 📂google-sheet ---------------------------------- 구글 스프레드 시트 연동 (GoogleSheet API 사용)
  ┃ ┣ 📂consts
  ┃ ┃ ┗ 📜sheet.const.ts
