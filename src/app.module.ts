@@ -13,6 +13,7 @@ import { RedisClientOptions } from 'redis';
 import * as redisStore from 'cache-manager-redis-store';
 import configuration from './config/configuration';
 import { LostarkModule } from './commons/lostark/lostark.module';
+import { UsersModule } from './commons/users/users.module';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { LostarkModule } from './commons/lostark/lostark.module';
     }),
     GoogleSheetModule,
     LostarkModule,
+    UsersModule,
     RewardsModule,
     CharacterModule,
     MarketPriceModule,
