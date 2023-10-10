@@ -5,8 +5,8 @@ import { Character } from 'src/apis/character/schemas/character.schema';
 import { LostarkService } from 'src/commons/lostark/lostark.service';
 
 @Injectable()
-export class CharacterUpdateService {
-  private readonly logger: Logger = new Logger(CharacterUpdateService.name);
+export class CharacterUpdaterService {
+  private readonly logger: Logger = new Logger(CharacterUpdaterService.name);
 
   constructor(
     private readonly lostarkService: LostarkService,
