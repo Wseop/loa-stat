@@ -17,4 +17,10 @@ export default () => ({
     guildId: process.env.GUILD_ID,
     noticeUrl: process.env.NOTICE_HOOK_URL,
   },
+  auth: {
+    authGoogleClientId: process.env.AUTH_GOOGLE_CLIENT_ID,
+    authGoogleClientSecret: process.env.AUTH_GOOGLE_CLIENT_SECRET,
+    accessSecret: process.env.ACCESS_SECRET,
+    refreshSecret: process.env.REFRESH_SECRET,
+  },
 });

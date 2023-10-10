@@ -14,6 +14,7 @@ import * as redisStore from 'cache-manager-redis-store';
 import configuration from './config/configuration';
 import { LostarkModule } from './commons/lostark/lostark.module';
 import { UsersModule } from './commons/users/users.module';
+import { AuthModule } from './apis/auth/auth.module';
 
 @Module({
   imports: [
@@ -53,6 +54,7 @@ import { UsersModule } from './commons/users/users.module';
     RewardsModule,
     CharacterModule,
     MarketPriceModule,
+    AuthModule,
     WorkersModule,
   ],
 })
