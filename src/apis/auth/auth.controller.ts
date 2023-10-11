@@ -4,6 +4,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { Request, Response } from 'express';
 import { OAuthUser } from './interfaces/auth.interface';
 import { ConfigService } from '@nestjs/config';
+import { DynamicAuthGuard } from './guards/dynamic-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -20,10 +21,10 @@ export class AuthController {
     return await this.authService.refreshAccessToken(req.user.email);
   }
 
-  @UseGuards(AuthGuard('google'))
-  @Get('/login/google')
-  async loginGoogle(@Req() req: Request & OAuthUser, @Res() res: Response) {
-    await this.authService.loginGoogle(req.user, res);
-    res.redirect(this.configService.get<string>('auth.googleRedirectURL'));
+  @Get('/login/:social')
+  @UseGuards(DynamicAuthGuard)
+  async loginOAuth(@Req() req: Request & OAuthUser, @Res() res: Response) {
+    await this.authService.loginOAuth(req.user, res);
+    res.redirect(this.configService.get<string>('auth.redirectURL'));
   }
 }

@@ -52,7 +52,7 @@ export class AuthService {
     }
   }
 
-  async loginGoogle(user: User, res: Response): Promise<void> {
+  async loginOAuth(user: User, res: Response): Promise<void> {
     // 회원 조회
     let result = await this.usersService.findOne(user.email);
     if (!result) {

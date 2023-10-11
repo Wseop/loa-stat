@@ -20,8 +20,8 @@ export default () => ({
   auth: {
     googleClientId: process.env.GOOGLE_CLIENT_ID,
     googleClientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    googleCallbackURL: process.env.GOOGLE_CALLBACK_URL,
-    googleRedirectURL: process.env.GOOGLE_REDIRECT_URL,
+    callbackURL: process.env.CALLBACK_URL,
+    redirectURL: process.env.REDIRECT_URL,
     accessSecret: process.env.ACCESS_SECRET,
     refreshSecret: process.env.REFRESH_SECRET,
   },
