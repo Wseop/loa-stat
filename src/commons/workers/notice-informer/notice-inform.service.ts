@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
 import { EmbedBuilder } from 'discord.js';
 import { LostarkNotice } from 'src/commons/lostark/interfaces/lostark-notice.interface';
@@ -9,7 +10,10 @@ export class NoticeInformService {
   private readonly logger: Logger = new Logger(NoticeInformService.name);
   private lastNoticeId: number = 0;
 
-  constructor(private readonly lostarkService: LostarkService) {
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly lostarkService: LostarkService,
+  ) {
     setTimeout(() => {
       this.refreshLostarkNoticeId();
     }, 1000 * 5);
@@ -69,7 +73,9 @@ export class NoticeInformService {
 
     if (embeds.length > 0) {
       try {
-        await axios.post(process.env.NOTICE_HOOK_URL, { embeds });
+        await axios.post(this.configService.get<string>('discord.noticeURL'), {
+          embeds,
+        });
       } catch (error) {
         if (error.response) this.logger.error(error.response.status);
         else if (error.request) this.logger.error(error.request);

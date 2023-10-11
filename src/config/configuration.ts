@@ -15,11 +15,13 @@ export default () => ({
   discord: {
     token: process.env.BOT_TOKEN,
     guildId: process.env.GUILD_ID,
-    noticeUrl: process.env.NOTICE_HOOK_URL,
+    noticeURL: process.env.NOTICE_HOOK_URL,
   },
   auth: {
-    authGoogleClientId: process.env.AUTH_GOOGLE_CLIENT_ID,
-    authGoogleClientSecret: process.env.AUTH_GOOGLE_CLIENT_SECRET,
+    googleClientId: process.env.GOOGLE_CLIENT_ID,
+    googleClientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    googleCallbackURL: process.env.GOOGLE_CALLBACK_URL,
+    googleRedirectURL: process.env.GOOGLE_REDIRECT_URL,
     accessSecret: process.env.ACCESS_SECRET,
     refreshSecret: process.env.REFRESH_SECRET,
   },
