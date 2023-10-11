@@ -6,8 +6,8 @@ import { LostarkNotice } from 'src/commons/lostark/interfaces/lostark-notice.int
 import { LostarkService } from 'src/commons/lostark/lostark.service';
 
 @Injectable()
-export class NoticeInformService {
-  private readonly logger: Logger = new Logger(NoticeInformService.name);
+export class NoticeInformerService {
+  private readonly logger: Logger = new Logger(NoticeInformerService.name);
   private lastNoticeId: number = 0;
 
   constructor(

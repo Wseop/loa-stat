@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { NoticeInformService } from './notice-inform.service';
+import { NoticeInformerService } from './notice-informer.service';
 import { LostarkModule } from 'src/commons/lostark/lostark.module';
 
 @Module({
   imports: [LostarkModule],
-  providers: [NoticeInformService],
+  providers: [NoticeInformerService],
 })
-export class NoticeInformModule {}
+export class NoticeInformerModule {}

@@ -11,8 +11,8 @@ import { LostarkService } from 'src/commons/lostark/lostark.service';
 import { getCurrentDate } from 'src/commons/utils/date';
 
 @Injectable()
-export class ItemPriceService {
-  private readonly logger: Logger = new Logger(ItemPriceService.name);
+export class PriceUpdaterService {
+  private readonly logger: Logger = new Logger(PriceUpdaterService.name);
 
   constructor(
     private readonly lostarkService: LostarkService,
