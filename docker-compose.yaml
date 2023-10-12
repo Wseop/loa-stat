@@ -13,6 +13,8 @@ services:
       - 7942:7942
 
   redis:
-    image: redis:latest
+    # image: redis:latest
+    build:
+      dockerfile: Dockerfile.redis
     ports:
       - 6379:6379
