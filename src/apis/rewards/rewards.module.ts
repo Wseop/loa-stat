@@ -8,5 +8,6 @@ import { RewardsService } from './rewards.service';
   imports: [GoogleSheetModule, MarketPriceModule],
   controllers: [RewardsController],
   providers: [RewardsService],
+  exports: [RewardsService],
 })
 export class RewardsModule {}

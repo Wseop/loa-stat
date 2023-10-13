@@ -1,19 +1,24 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { CharacterService } from 'src/apis/character/character.service';
+import { RewardsService } from 'src/apis/rewards/rewards.service';
 import { ClassEngravingMap } from 'src/commons/consts/lostark.const';
+import { RewardsCategory } from 'src/commons/enums/rewards.enum';
 
 @Injectable()
 export class CacheWarmerService {
   private readonly logger: Logger = new Logger(CacheWarmerService.name);
 
-  constructor(private readonly characterService: CharacterService) {
+  constructor(
+    private readonly characterService: CharacterService,
+    private readonly rewardsService: RewardsService,
+  ) {
     setTimeout(() => {
       this.warmCharacterCache();
-    }, 1000 * 5);
+      this.warmRewardCache();
+    }, 1000 * 10);
   }
 
   private async warmCharacterCache() {
-    // 1시간마다 character 관련 cache warming
     while (true) {
       // server
       await this.characterService.setCache(['serverName', 'itemLevel'], '', 0);
@@ -36,7 +41,16 @@ export class CacheWarmerService {
           0,
         );
       }
-      this.logger.debug('Warming character cache end');
+      this.logger.debug('Warm-up character cache');
+      await new Promise((_) => setTimeout(_, 1000 * 60 * 60));
+    }
+  }
+
+  private async warmRewardCache() {
+    while (true) {
+      this.rewardsService.getRewards(RewardsCategory.카오스던전);
+      this.rewardsService.getRewards(RewardsCategory.가디언토벌);
+      this.logger.debug('Warm-up rewards cache');
       await new Promise((_) => setTimeout(_, 1000 * 60 * 60));
     }
   }
