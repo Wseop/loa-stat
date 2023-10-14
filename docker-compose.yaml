@@ -15,6 +15,7 @@ services:
   redis:
     # image: redis:latest
     build:
+      context: .
       dockerfile: Dockerfile.redis
     ports:
       - 6379:6379
