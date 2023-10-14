@@ -39,20 +39,14 @@ export class RewardsService {
       // Reward 생성
       const rewards: RewardDto[] = [];
       levels.forEach((level) => {
-        if (total[level] > 0) {
-          const reward = new RewardDto(
-            level,
-            total[level],
-            goldValue[level].tradableGoldValue,
-            goldValue[level].goldValue,
-          );
-          reward.setReward(
-            rewardMin[level],
-            rewardMax[level],
-            rewardAvg[level],
-          );
-          rewards.push(reward);
-        }
+        const reward = new RewardDto(
+          level,
+          total[level],
+          goldValue[level].tradableGoldValue,
+          goldValue[level].goldValue,
+        );
+        reward.setReward(rewardMin[level], rewardMax[level], rewardAvg[level]);
+        rewards.push(reward);
       });
       return rewards;
     } else {
