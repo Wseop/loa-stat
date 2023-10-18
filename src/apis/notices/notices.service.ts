@@ -9,7 +9,6 @@ import { wait } from 'src/commons/utils/time';
 export class NoticesService {
   private readonly logger: Logger = new Logger(NoticesService.name);
   private readonly cacheKey = 'NOTICE_CACHE';
-  private isStart: boolean = false;
 
   constructor(
     @Inject(CACHE_MANAGER)
@@ -17,22 +16,17 @@ export class NoticesService {
     private readonly lostarkService: LostarkService,
   ) {
     setTimeout(() => {
-      this.startService();
+      this.updateNoticeCache();
     }, 1000 * 10);
+    setInterval(() => {
+      this.updateNoticeCache();
+    }, 1000 * 60);
   }
 
-  private async startService(): Promise<void> {
-    if (this.isStart) return;
-
-    this.isStart = true;
-    this.logger.log('START | Updating notice cache');
-    while (true) {
-      // 주기적으로 Notice cache 업데이트
-      const notices = await this.lostarkService.getNotices();
-      if (notices?.length > 0) {
-        this.cacheManager.set(this.cacheKey, notices, { ttl: 60 * 60 * 24 });
-      }
-      await wait(1000 * 60);
+  private async updateNoticeCache(): Promise<void> {
+    const notices = await this.lostarkService.getNotices();
+    if (notices?.length > 0) {
+      this.cacheManager.set(this.cacheKey, notices, { ttl: 60 * 60 * 24 });
     }
   }
 
