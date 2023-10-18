@@ -22,6 +22,7 @@ import {
   Skill,
 } from 'src/apis/character/schemas/character.schema';
 import { Sets } from '../consts/lostark.const';
+import { wait } from '../utils/time';
 
 @Injectable()
 export class LostarkService {
@@ -310,7 +311,7 @@ export class LostarkService {
       // 429 재시도
       if (result === 429) {
         this.logger.warn('Rate Limit Exceeded - Retry after 1minute');
-        await new Promise((_) => setTimeout((_) => 1000 * 60));
+        await wait(1000 * 60);
         result = await this.get(
           `/armories/characters/${characterName}?filters=profiles%2Bequipment%2Bengravings%2Bcombat-skills%2Bgems`,
         );

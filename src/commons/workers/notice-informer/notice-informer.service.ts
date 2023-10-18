@@ -4,6 +4,7 @@ import axios from 'axios';
 import { EmbedBuilder } from 'discord.js';
 import { LostarkNotice } from 'src/commons/lostark/interfaces/lostark-notice.interface';
 import { LostarkService } from 'src/commons/lostark/lostark.service';
+import { wait } from 'src/commons/utils/time';
 
 @Injectable()
 export class NoticeInformerService {
@@ -38,7 +39,7 @@ export class NoticeInformerService {
         }
         break;
       } else {
-        await new Promise((_) => setTimeout(_, 1000 * 10));
+        await wait(1000 * 10);
       }
     }
     this.logger.log(`UPDATE | NoticeId - ${this.lastNoticeId}`);

@@ -3,6 +3,7 @@ import { CharacterService } from 'src/apis/character/character.service';
 import { RewardsService } from 'src/apis/rewards/rewards.service';
 import { ClassEngravingMap } from 'src/commons/consts/lostark.const';
 import { RewardsCategory } from 'src/commons/enums/rewards.enum';
+import { wait } from 'src/commons/utils/time';
 
 @Injectable()
 export class CacheWarmerService {
@@ -42,7 +43,7 @@ export class CacheWarmerService {
         );
       }
       this.logger.debug('Warm-up character cache');
-      await new Promise((_) => setTimeout(_, 1000 * 60 * 60));
+      await wait(1000 * 60 * 60);
     }
   }
 
@@ -51,7 +52,7 @@ export class CacheWarmerService {
       this.rewardsService.getRewards(RewardsCategory.카오스던전);
       this.rewardsService.getRewards(RewardsCategory.가디언토벌);
       this.logger.debug('Warm-up rewards cache');
-      await new Promise((_) => setTimeout(_, 1000 * 60 * 60));
+      await wait(1000 * 60 * 60);
     }
   }
 }

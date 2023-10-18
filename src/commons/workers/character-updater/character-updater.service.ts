@@ -3,6 +3,7 @@ import { CharacterService } from 'src/apis/character/character.service';
 import { ValidateCharacter } from 'src/apis/character/functions/character.functions';
 import { Character } from 'src/apis/character/schemas/character.schema';
 import { LostarkService } from 'src/commons/lostark/lostark.service';
+import { wait } from 'src/commons/utils/time';
 
 @Injectable()
 export class CharacterUpdaterService {
@@ -48,9 +49,9 @@ export class CharacterUpdaterService {
       const characterNames = await this.getCharacterNames();
       while (characterNames.length > 0) {
         await this.updateCharacter(characterNames.pop());
-        await new Promise((_) => setTimeout(_, 1000));
+        await wait(500);
       }
-      await new Promise((_) => setTimeout(_, 1000 * 60 * 60 * 24));
+      await wait(1000 * 60 * 60 * 24);
     }
   }
 
@@ -59,9 +60,10 @@ export class CharacterUpdaterService {
       const characterName = this.characterService.popRequest();
       if (characterName) {
         await this.updateCharacter(characterName);
-        this.logger.debug(`UPDATE | ${characterName}`);
-        await new Promise((_) => setTimeout(_, 100));
-      } else await new Promise((_) => setTimeout(_, 1000 * 60 * 5));
+        await wait(500);
+      } else {
+        await wait(1000 * 60 * 5);
+      }
     }
   }
 

@@ -3,6 +3,7 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { Cache } from 'cache-manager';
 import { LostarkNotice } from 'src/commons/lostark/interfaces/lostark-notice.interface';
 import { LostarkService } from 'src/commons/lostark/lostark.service';
+import { wait } from 'src/commons/utils/time';
 
 @Injectable()
 export class NoticesService {
@@ -31,8 +32,7 @@ export class NoticesService {
       if (notices?.length > 0) {
         this.cacheManager.set(this.cacheKey, notices, { ttl: 60 * 60 * 24 });
       }
-
-      await new Promise((_) => setTimeout(_, 1000 * 60));
+      await wait(1000 * 60);
     }
   }
 
