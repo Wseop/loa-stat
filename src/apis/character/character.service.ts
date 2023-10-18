@@ -8,6 +8,7 @@ import { CharacterServersDto } from './dtos/character-servers.dto';
 import { CharacterClassEngravingsDto } from './dtos/character-class-engravings.dto';
 import { CharacterSettingsDto } from './dtos/character-settings.dto';
 import { CharacterSkillsDto } from './dtos/character-skills.dto';
+import { ClassEngravingMap } from 'src/commons/consts/lostark.const';
 
 @Injectable()
 export class CharacterService {
@@ -19,7 +20,26 @@ export class CharacterService {
     private readonly characterModel: Model<Character>,
     @Inject(CACHE_MANAGER)
     private readonly cacheManager: Cache,
-  ) {}
+  ) {
+    setTimeout(() => {
+      this.warmCache();
+    }, 1000 * 10);
+    setInterval(
+      () => {
+        this.warmCache();
+      },
+      1000 * 60 * 60,
+    );
+  }
+
+  private async warmCache(): Promise<void> {
+    await this.setCache(['serverName', 'itemLevel'], '', 0);
+    await this.setCache(['classEngraving', 'itemLevel'], '', 0);
+    Object.keys(ClassEngravingMap).forEach(async (classEngraving) => {
+      await this.setCache(['setting', 'itemLevel'], classEngraving, 0);
+      await this.setCache(['skills', 'itemLevel'], classEngraving, 0);
+    });
+  }
 
   ////////////////////
   // CharacterModel //
@@ -70,7 +90,6 @@ export class CharacterService {
       let result: Character[] = await this.cacheManager.get(redisKey);
       if (!result) {
         // cache miss (db 접근, cache에 저장)
-        this.logger.debug(`Character cache miss - ${redisKey}`);
         if (classEngraving)
           result = await this.find({ classEngraving }, fields);
         else result = await this.find(null, fields);
@@ -92,7 +111,11 @@ export class CharacterService {
     }
   }
 
-  async setCache(fields: string[], classEngraving: string, ttl: number) {
+  private async setCache(
+    fields: string[],
+    classEngraving: string,
+    ttl: number,
+  ) {
     let redisKey = classEngraving;
     fields.forEach((field) => (redisKey += field));
 

@@ -20,7 +20,22 @@ export class RewardsService {
     private readonly marketPriceService: MarketPriceService,
     @Inject(CACHE_MANAGER)
     private readonly cacheManager: Cache,
-  ) {}
+  ) {
+    setTimeout(() => {
+      this.warmCache();
+    }, 1000 * 10);
+    setInterval(
+      () => {
+        this.warmCache();
+      },
+      1000 * 60 * 60,
+    );
+  }
+
+  private async warmCache(): Promise<void> {
+    this.getDataFromCache(RewardsCategory.카오스던전);
+    this.getDataFromCache(RewardsCategory.가디언토벌);
+  }
 
   async getRewards(category: RewardsCategory): Promise<RewardDto[]> {
     const data = await this.getDataFromCache(category);
@@ -60,7 +75,7 @@ export class RewardsService {
       // cache miss
       data = await this.getData(category);
       this.cacheManager.set(SheetMap[category], data, { ttl: 60 * 60 * 24 });
-      this.logger.debug(`cache update - ${SheetMap[category]}`);
+      this.logger.debug(`Set Reward cache - ${SheetMap[category]}`);
     }
     return data;
   }
