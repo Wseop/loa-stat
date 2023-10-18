@@ -9,6 +9,8 @@ import { CharacterClassEngravingsDto } from './dtos/character-class-engravings.d
 import { CharacterSettingsDto } from './dtos/character-settings.dto';
 import { CharacterSkillsDto } from './dtos/character-skills.dto';
 import { ClassEngravingMap } from 'src/commons/consts/lostark.const';
+import { LostarkService } from 'src/commons/lostark/lostark.service';
+import { ValidateCharacter } from './functions/character.functions';
 
 @Injectable()
 export class CharacterService {
@@ -20,6 +22,7 @@ export class CharacterService {
     private readonly characterModel: Model<Character>,
     @Inject(CACHE_MANAGER)
     private readonly cacheManager: Cache,
+    private readonly lostarkService: LostarkService,
   ) {
     setTimeout(() => {
       this.warmCache();
@@ -30,15 +33,16 @@ export class CharacterService {
       },
       1000 * 60 * 60,
     );
-  }
 
-  private async warmCache(): Promise<void> {
-    await this.setCache(['serverName', 'itemLevel'], '', 0);
-    await this.setCache(['classEngraving', 'itemLevel'], '', 0);
-    Object.keys(ClassEngravingMap).forEach(async (classEngraving) => {
-      await this.setCache(['setting', 'itemLevel'], classEngraving, 0);
-      await this.setCache(['skills', 'itemLevel'], classEngraving, 0);
-    });
+    setTimeout(() => {
+      this.refreshDB();
+    }, 1000 * 10);
+    setInterval(
+      () => {
+        this.refreshDB();
+      },
+      1000 * 60 * 60 * 24,
+    );
   }
 
   ////////////////////
@@ -72,7 +76,7 @@ export class CharacterService {
     return await this.characterModel.find(filter, projection);
   }
 
-  async findFromCache(
+  private async findFromCache(
     minItemLevel: number,
     maxItemLevel: number,
     fields: string[],
@@ -131,7 +135,7 @@ export class CharacterService {
     }
   }
 
-  async upsert(character: Character): Promise<Character> {
+  private async upsert(character: Character): Promise<Character> {
     return await this.characterModel.findOneAndUpdate(
       {
         characterName: character.characterName,
@@ -144,7 +148,7 @@ export class CharacterService {
     );
   }
 
-  async deleteOne(characterName: string): Promise<number> {
+  private async deleteOne(characterName: string): Promise<number> {
     return (await this.characterModel.deleteOne({ characterName }))
       .deletedCount;
   }
@@ -157,7 +161,7 @@ export class CharacterService {
     this.logger.debug(`Add request - ${characterName}`);
   }
 
-  popRequest(): string {
+  private popRequest(): string {
     const characterName = this.addRequestQ.shift();
     if (characterName) this.logger.debug(`Pop request - ${characterName}`);
     return characterName;
@@ -251,5 +255,51 @@ export class CharacterService {
     });
     result.sort();
     return result;
+  }
+
+  //////////////////////////////
+
+  private async warmCache(): Promise<void> {
+    await this.setCache(['serverName', 'itemLevel'], '', 0);
+    await this.setCache(['classEngraving', 'itemLevel'], '', 0);
+    Object.keys(ClassEngravingMap).forEach(async (classEngraving) => {
+      await this.setCache(['setting', 'itemLevel'], classEngraving, 0);
+      await this.setCache(['skills', 'itemLevel'], classEngraving, 0);
+    });
+  }
+
+  // DB의 캐릭터 정보 업데이트 or 삭제
+  private async refreshCharacter(characterName: string): Promise<void> {
+    const character = await this.lostarkService.searchCharacter(characterName);
+
+    if (character) {
+      // 정상적인 캐릭터 정보면 upsert
+      if (
+        !Number.isInteger(character) &&
+        ValidateCharacter(character as Character)
+      ) {
+        this.upsert(character as Character);
+      }
+    } else {
+      // 존재하지 않는 캐릭터면 delete
+      this.deleteOne(characterName);
+    }
+  }
+
+  // DB 데이터 갱신
+  private async refreshDB(): Promise<void> {
+    const characterNames = (await this.find({}, ['characterName'])).map(
+      (v) => v.characterName,
+    );
+
+    // from db
+    while (characterNames?.length > 0) {
+      await this.refreshCharacter(characterNames.pop());
+    }
+
+    // from request
+    while (this.addRequestQ.length > 0) {
+      await this.refreshCharacter(this.popRequest());
+    }
   }
 }

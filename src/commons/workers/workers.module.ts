@@ -1,8 +1,7 @@
 import { Module } from '@nestjs/common';
 import { NoticeInformerModule } from './notice-informer/notice-informer.module';
-import { CharacterUpdaterModule } from './character-updater/character-updater.module';
 
 @Module({
-  imports: [NoticeInformerModule, CharacterUpdaterModule],
+  imports: [NoticeInformerModule],
 })
 export class WorkersModule {}
