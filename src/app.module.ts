@@ -15,6 +15,7 @@ import configuration from './config/configuration';
 import { LostarkModule } from './commons/lostark/lostark.module';
 import { UsersModule } from './commons/users/users.module';
 import { AuthModule } from './apis/auth/auth.module';
+import { NoticesModule } from './apis/notices/notices.module';
 
 @Module({
   imports: [
@@ -54,6 +55,7 @@ import { AuthModule } from './apis/auth/auth.module';
     RewardsModule,
     CharacterModule,
     MarketPriceModule,
+    NoticesModule,
     AuthModule,
     WorkersModule,
   ],
