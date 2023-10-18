@@ -3,7 +3,6 @@ import { MarketPriceService } from 'src/apis/market-price/market-price.service';
 import {
   AuctionItemCategory,
   MarketItemCategory,
-  MarketItemId,
 } from 'src/commons/enums/lostark.enum';
 import { RequestAuctionItem } from 'src/commons/lostark/interfaces/lostark-auction.interface';
 import { RequestMarketItem } from 'src/commons/lostark/interfaces/lostark-market.interface';
@@ -36,7 +35,7 @@ export class PriceUpdaterService {
   }
 
   private async updateReforge() {
-    const items = [
+    const itemNames = [
       '명예의 파편 주머니(소)',
       '명예의 파편 주머니(중)',
       '명예의 파편 주머니(대)',
@@ -52,27 +51,42 @@ export class PriceUpdaterService {
       '상급 오레하 융화 재료',
       '최상급 오레하 융화 재료',
     ];
+    const request: RequestMarketItem = {
+      categoryCode: MarketItemCategory['강화 재료'],
+      pageNo: 1,
+    };
+    const result = await this.lostarkService.searchMarketItems(request);
     const currentDate = getCurrentDate();
 
-    items.forEach(async (itemName) => {
-      const price = await this.lostarkService.getAvgPrice(
-        MarketItemId[itemName],
-      );
-      this.marketPriceService.updatePrice({
-        itemName,
-        price,
-        updated: currentDate,
-      });
+    result.forEach((value) => {
+      if (itemNames.includes(value.itemName)) {
+        this.marketPriceService.updatePrice({
+          itemName: value.itemName,
+          itemGrade: value.itemGrade,
+          iconPath: value.iconPath,
+          price: value.minPrice,
+          updated: currentDate,
+        });
+      }
     });
   }
 
   private async updateEsther() {
-    this.marketPriceService.updatePrice({
+    const request: RequestMarketItem = {
+      categoryCode: MarketItemCategory['강화 재료'],
+      pageNo: 1,
+      itemGrade: '에스더',
       itemName: '에스더의 기운',
-      price: await this.lostarkService.getAvgPrice(
-        MarketItemId['에스더의 기운'],
-      ),
-      updated: getCurrentDate(),
+    };
+    const result = await this.lostarkService.searchMarketItems(request);
+    const currentDate = getCurrentDate();
+
+    this.marketPriceService.updatePrice({
+      itemName: result[0].itemName,
+      itemGrade: result[0].itemGrade,
+      iconPath: result[0].iconPath,
+      price: result[0].minPrice,
+      updated: currentDate,
     });
   }
 
@@ -98,6 +112,7 @@ export class PriceUpdaterService {
       if (auctionItem?.buyPrice) {
         this.marketPriceService.updatePrice({
           itemName: auctionItem.itemName,
+          itemGrade: auctionItem.itemGrade,
           price: auctionItem.buyPrice,
           updated: currentDate,
         });
@@ -117,6 +132,8 @@ export class PriceUpdaterService {
     result.forEach((value) => {
       this.marketPriceService.updatePrice({
         itemName: value.itemName,
+        itemGrade: value.itemGrade,
+        iconPath: value.iconPath,
         price: value.minPrice,
         updated: currentDate,
       });
