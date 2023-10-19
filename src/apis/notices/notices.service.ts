@@ -3,7 +3,6 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { Cache } from 'cache-manager';
 import { LostarkNotice } from 'src/commons/lostark/interfaces/lostark-notice.interface';
 import { LostarkService } from 'src/commons/lostark/lostark.service';
-import { wait } from 'src/commons/utils/time';
 
 @Injectable()
 export class NoticesService {
