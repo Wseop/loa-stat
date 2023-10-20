@@ -18,14 +18,10 @@ export class MarketPriceService {
 
   constructor(private readonly lostarkService: LostarkService) {
     setTimeout(() => {
-      this.updateReforge();
-      this.updateGem();
-      this.updateEngravingBook();
+      this.refreshMarketPrice();
     }, 1000 * 5);
     setInterval(() => {
-      this.updateReforge();
-      this.updateGem();
-      this.updateEngravingBook();
+      this.refreshMarketPrice();
     }, 1000 * 60);
   }
 
@@ -49,7 +45,13 @@ export class MarketPriceService {
     }
   }
 
-  private async updateReforge() {
+  private async refreshMarketPrice() {
+    this.refreshReforge();
+    this.refreshGem();
+    this.refreshEngravingBook();
+  }
+
+  private async refreshReforge() {
     const itemNames = [
       '명예의 파편 주머니(소)',
       '명예의 파편 주머니(중)',
@@ -87,7 +89,7 @@ export class MarketPriceService {
     });
   }
 
-  private async updateGem() {
+  private async refreshGem() {
     const requests: RequestAuctionItem[] = [];
     const currentDate = getCurrentDate();
 
@@ -117,7 +119,7 @@ export class MarketPriceService {
     });
   }
 
-  private async updateEngravingBook() {
+  private async refreshEngravingBook() {
     const request: RequestMarketItem = {
       categoryCode: MarketItemCategory.각인서,
       pageNo: 1,

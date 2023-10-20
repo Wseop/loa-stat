@@ -31,7 +31,7 @@ export class CharacterService {
       () => {
         this.warmCache();
       },
-      1000 * 60 * 60,
+      1000 * 60 * 60 * 6,
     );
 
     setTimeout(() => {
@@ -130,7 +130,6 @@ export class CharacterService {
 
       if (data) {
         this.cacheManager.set(redisKey, data, { ttl });
-        this.logger.debug(`Set character cache - ${redisKey}`);
       }
     }
   }
@@ -260,12 +259,14 @@ export class CharacterService {
   //////////////////////////////
 
   private async warmCache(): Promise<void> {
+    this.logger.log('START | WarmCache');
     await this.setCache(['serverName', 'itemLevel'], '', 0);
     await this.setCache(['classEngraving', 'itemLevel'], '', 0);
     Object.keys(ClassEngravingMap).forEach(async (classEngraving) => {
       await this.setCache(['setting', 'itemLevel'], classEngraving, 0);
       await this.setCache(['skills', 'itemLevel'], classEngraving, 0);
     });
+    this.logger.log('END | WarmCache');
   }
 
   // DB의 캐릭터 정보 업데이트 or 삭제
@@ -292,6 +293,8 @@ export class CharacterService {
       (v) => v.characterName,
     );
 
+    this.logger.log(`START | RefreshDB - ${characterNames.length} characters`);
+
     // from db
     while (characterNames?.length > 0) {
       await this.refreshCharacter(characterNames.pop());
@@ -301,5 +304,7 @@ export class CharacterService {
     while (this.addRequestQ.length > 0) {
       await this.refreshCharacter(this.popRequest());
     }
+
+    this.logger.log('END | RefreshDB');
   }
 }

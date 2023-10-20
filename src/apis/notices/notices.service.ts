@@ -16,7 +16,7 @@ export class NoticesService {
   ) {
     setTimeout(() => {
       this.updateNoticeCache();
-    }, 1000 * 10);
+    }, 1000 * 5);
     setInterval(() => {
       this.updateNoticeCache();
     }, 1000 * 60);

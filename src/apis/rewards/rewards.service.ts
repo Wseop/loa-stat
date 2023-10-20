@@ -28,13 +28,15 @@ export class RewardsService {
       () => {
         this.warmCache();
       },
-      1000 * 60 * 60,
+      1000 * 60 * 60 * 24,
     );
   }
 
   private async warmCache(): Promise<void> {
-    this.getDataFromCache(RewardsCategory.카오스던전);
-    this.getDataFromCache(RewardsCategory.가디언토벌);
+    this.logger.log('START | WarmCache');
+    await this.getDataFromCache(RewardsCategory.카오스던전);
+    await this.getDataFromCache(RewardsCategory.가디언토벌);
+    this.logger.log('END | WarmCache');
   }
 
   async getRewards(category: RewardsCategory): Promise<RewardDto[]> {
@@ -75,7 +77,6 @@ export class RewardsService {
       // cache miss
       data = await this.getData(category);
       this.cacheManager.set(SheetMap[category], data, { ttl: 60 * 60 * 24 });
-      this.logger.debug(`Set Reward cache - ${SheetMap[category]}`);
     }
     return data;
   }
