@@ -11,6 +11,7 @@ import { CharacterSkillsDto } from './dtos/character-skills.dto';
 import { ClassEngravingMap } from 'src/commons/consts/lostark.const';
 import { LostarkService } from 'src/commons/lostark/lostark.service';
 import { ValidateCharacter } from './functions/character.functions';
+import { wait } from 'src/commons/utils/time';
 
 @Injectable()
 export class CharacterService {
@@ -298,11 +299,13 @@ export class CharacterService {
     // from db
     while (characterNames?.length > 0) {
       await this.refreshCharacter(characterNames.pop());
+      await wait(500);
     }
 
     // from request
     while (this.addRequestQ.length > 0) {
       await this.refreshCharacter(this.popRequest());
+      await wait(500);
     }
 
     this.logger.log('END | RefreshDB');
