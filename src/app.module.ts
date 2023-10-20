@@ -5,7 +5,6 @@ import { NecordModule } from 'necord';
 import { IntentsBitField } from 'discord.js';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CharacterModule } from './apis/character/character.module';
-import { WorkersModule } from './commons/workers/workers.module';
 import { MarketPriceModule } from './apis/market-price/market-price.module';
 import { RewardsModule } from './apis/rewards/rewards.module';
 import { CacheModule } from '@nestjs/cache-manager';
@@ -16,6 +15,7 @@ import { LostarkModule } from './commons/lostark/lostark.module';
 import { UsersModule } from './commons/users/users.module';
 import { AuthModule } from './apis/auth/auth.module';
 import { NoticesModule } from './apis/notices/notices.module';
+import { NoticeInformerModule } from './commons/notice-informer/notice-informer.module';
 
 @Module({
   imports: [
@@ -57,7 +57,7 @@ import { NoticesModule } from './apis/notices/notices.module';
     MarketPriceModule,
     NoticesModule,
     AuthModule,
-    WorkersModule,
+    NoticeInformerModule,
   ],
 })
 export class AppModule {}
