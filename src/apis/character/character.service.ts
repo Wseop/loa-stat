@@ -261,12 +261,14 @@ export class CharacterService {
 
   private async warmCache(): Promise<void> {
     this.logger.log('START | WarmCache');
+
     await this.setCache(['serverName', 'itemLevel'], '', 0);
     await this.setCache(['classEngraving', 'itemLevel'], '', 0);
-    Object.keys(ClassEngravingMap).forEach(async (classEngraving) => {
+    for (const classEngraving of Object.keys(ClassEngravingMap)) {
       await this.setCache(['setting', 'itemLevel'], classEngraving, 0);
       await this.setCache(['skills', 'itemLevel'], classEngraving, 0);
-    });
+    }
+
     this.logger.log('END | WarmCache');
   }
 
@@ -299,13 +301,13 @@ export class CharacterService {
     // from db
     while (characterNames?.length > 0) {
       await this.refreshCharacter(characterNames.pop());
-      await wait(500);
+      await wait(100);
     }
 
     // from request
     while (this.addRequestQ.length > 0) {
       await this.refreshCharacter(this.popRequest());
-      await wait(500);
+      await wait(100);
     }
 
     this.logger.log('END | RefreshDB');
