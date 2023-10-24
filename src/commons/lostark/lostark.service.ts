@@ -7,6 +7,7 @@ import {
 } from './interfaces/lostark-notice.interface';
 import {
   APIResultAuctionItem,
+  APIResultAuctionOption,
   AuctionItem,
   RequestAuctionItem,
 } from './interfaces/lostark-auction.interface';
@@ -44,9 +45,20 @@ export class LostarkService {
   private readonly logger: Logger = new Logger(LostarkService.name);
   private readonly apiKeys: string[] = [];
   private apiKeyIndex: number = 0;
+  private auctionOption: APIResultAuctionOption = null;
 
   constructor(private readonly googleSheetService: GoogleSheetService) {
     this.loadApiKey();
+
+    setTimeout(() => {
+      this.updateAuctionOption();
+    }, 1000 * 5);
+    setInterval(
+      () => {
+        this.updateAuctionOption();
+      },
+      1000 * 60 * 60 * 24,
+    );
   }
 
   /////////
@@ -250,6 +262,15 @@ export class LostarkService {
     }
 
     return auctionItem;
+  }
+
+  private async updateAuctionOption(): Promise<void> {
+    const result = await this.get('/auctions/options');
+    if (!Number.isInteger(result)) this.auctionOption = result;
+  }
+
+  getAuctionOption(): APIResultAuctionOption {
+    return this.auctionOption;
   }
 
   ///////////////

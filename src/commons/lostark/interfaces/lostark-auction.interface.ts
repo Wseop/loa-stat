@@ -65,3 +65,39 @@ export interface APIResultAuctionItem {
     }[];
   }[];
 }
+
+export interface APIResultAuctionOption {
+  MaxItemLevel: number;
+  ItemGradeQualities: number[];
+  SkillOptions: {
+    Value: number;
+    Class: string;
+    Text: string;
+    IsSkillGroup: boolean;
+    Tripods: {
+      Value: number;
+      Text: string;
+      IsGem: boolean;
+    }[];
+  }[];
+  EtcOptions: {
+    Value: number;
+    Text: string;
+    EtcSubs: {
+      Value: number;
+      Text: string;
+      Class: string;
+    }[];
+  }[];
+  Categories: {
+    Subs: {
+      Code: number;
+      CodeName: string;
+    }[];
+    Code: number;
+    CodeName: string;
+  }[];
+  ItemGrades: string[];
+  ItemTiers: number[];
+  Classes: string[];
+}
