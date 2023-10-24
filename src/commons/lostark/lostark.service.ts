@@ -311,14 +311,12 @@ export class LostarkService {
     armoryEngraving: ArmoryEngraving,
   ): Setting {
     if (armoryProfile && armoryEquipments && armoryEngraving) {
-      const result: Setting = {
+      return {
         stat: this.parseStat(armoryProfile.Stats),
         set: this.parseSet(armoryEquipments),
         elixir: this.parseElixir(armoryEquipments),
         engravings: this.parseEngraving(armoryEngraving),
       };
-
-      return result;
     } else {
       return null;
     }
