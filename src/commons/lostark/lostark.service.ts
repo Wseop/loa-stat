@@ -1,8 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 import axios from 'axios';
 import { GoogleSheetService } from 'src/commons/google-sheet/google-sheet.service';
-import { LostarkNotice } from './interfaces/lostark-notice.interface';
 import {
+  LostarkNotice,
+  APIResultNotice,
+} from './interfaces/lostark-notice.interface';
+import {
+  APIResultAuctionItem,
   AuctionItem,
   RequestAuctionItem,
 } from './interfaces/lostark-auction.interface';
@@ -11,6 +15,8 @@ import {
   Profile,
 } from 'src/apis/character/functions/character.functions';
 import {
+  APIResultMarketItem,
+  APIResultMarketItemAvg,
   MarketItem,
   RequestMarketItem,
 } from './interfaces/lostark-market.interface';
@@ -23,6 +29,15 @@ import {
 } from 'src/apis/character/schemas/character.schema';
 import { Sets } from '../consts/lostark.const';
 import { wait } from '../utils/time';
+import {
+  APIResultCharacter,
+  ArmoryEngraving,
+  ArmoryEquipment,
+  ArmoryGem,
+  ArmoryProfile,
+  ArmorySkill,
+  ProfileStat,
+} from './interfaces/lostark-character.interface';
 
 @Injectable()
 export class LostarkService {
@@ -111,31 +126,24 @@ export class LostarkService {
   // NOTICE //
   ////////////
   async getNotices(): Promise<LostarkNotice[]> {
-    const result = await this.get('/news/notices');
+    const result: APIResultNotice[] = await this.get('/news/notices');
 
     if (result?.length > 0) {
       const notices: LostarkNotice[] = [];
 
-      result.forEach(
-        (value: {
-          Title: string;
-          Date: string;
-          Link: string;
-          Type: string;
-        }) => {
-          notices.push({
-            noticeId: Number(
-              value.Link.replace(
-                'https://lostark.game.onstove.com/News/Notice/Views/',
-                '',
-              ),
+      result.forEach((value) => {
+        notices.push({
+          noticeId: Number(
+            value.Link.replace(
+              'https://lostark.game.onstove.com/News/Notice/Views/',
+              '',
             ),
-            title: value.Title,
-            date: new Date(value.Date),
-            link: value.Link,
-          });
-        },
-      );
+          ),
+          title: value.Title,
+          date: value.Date,
+          link: value.Link,
+        });
+      });
 
       return notices;
     } else {
@@ -147,17 +155,9 @@ export class LostarkService {
   // MARKET //
   ////////////
   async getAvgPrice(marketItemId: MarketItemId): Promise<number> {
-    const result: {
-      Name: string;
-      TradeRemainCount: number;
-      BundleCount: number;
-      Stats: {
-        Date: string;
-        AvgPrice: number;
-        TradeCount: number;
-      }[];
-      ToolTip: string;
-    }[] = await this.get(`/markets/items/${marketItemId}`);
+    const result: APIResultMarketItemAvg[] = await this.get(
+      `/markets/items/${marketItemId}`,
+    );
 
     if (result?.length > 0 && result[0].Stats?.length > 0)
       return result[0].Stats[0].AvgPrice;
@@ -166,22 +166,7 @@ export class LostarkService {
 
   async searchMarketItems(request: RequestMarketItem): Promise<MarketItem[]> {
     const marketItems: MarketItem[] = [];
-    let result: {
-      PageNo: number;
-      PageSize: number;
-      TotalCout: number;
-      Items: {
-        Id: number;
-        Name: string;
-        Grade: string;
-        Icon: string;
-        BundleCount: number;
-        TradeRemainCount: number;
-        YDayAvgPrice: number;
-        RecentPrice: number;
-        CurrentMinPrice: number;
-      }[];
-    } = await this.post('/markets/items', {
+    const searchOption = {
       Sort: 'CURRENT_MIN_PRICE',
       CategoryCode: request.categoryCode,
       CharacterClass: request.characterClass,
@@ -189,11 +174,15 @@ export class LostarkService {
       ItemName: request.itemName,
       PageNo: request.pageNo,
       SortCondition: 'ASC',
-    });
-    const pageSize = Number(result.PageSize);
+    };
+    let result: APIResultMarketItem = await this.post(
+      '/markets/items',
+      searchOption,
+    );
+    const pageSize = Number(result?.PageSize);
 
     // 전체 페이지 검색
-    while (result?.Items?.length > 0 && request.pageNo <= pageSize) {
+    while (result?.Items?.length > 0 && searchOption.PageNo <= pageSize) {
       result.Items.forEach((item) => {
         marketItems.push({
           itemName: item.Name,
@@ -203,16 +192,8 @@ export class LostarkService {
         });
       });
 
-      request.pageNo++;
-      result = await this.post('/markets/items', {
-        Sort: 'CURRENT_MIN_PRICE',
-        CategoryCode: request.categoryCode,
-        CharacterClass: request.characterClass,
-        ItemGrade: request.itemGrade,
-        ItemName: request.itemName,
-        PageNo: request.pageNo,
-        SortCondition: 'ASC',
-      });
+      searchOption.PageNo++;
+      result = await this.post('/markets/items', searchOption);
     }
 
     return marketItems;
@@ -222,37 +203,7 @@ export class LostarkService {
   // AUCTION //
   /////////////
   async searchAuctionItem(request: RequestAuctionItem): Promise<AuctionItem> {
-    const result: {
-      PageNo: number;
-      PageSize: number;
-      TotalCount: number;
-      Items: {
-        Name: string;
-        Grade: string;
-        Tier: number;
-        Level: number;
-        Icon: string;
-        GradeQuality: number;
-        AuctionInfo: {
-          StartPrice: number;
-          BuyPrice: number;
-          BidPrice: number;
-          EndDate: string;
-          BidCount: number;
-          BidStartPrice: number;
-          IsCompetitive: boolean;
-          TradeAllowCount: number;
-        };
-        Options: {
-          Type: string;
-          OptionName: string;
-          OptionNameTripod: string;
-          Value: number;
-          IsPenalty: boolean;
-          ClassName: string;
-        }[];
-      }[];
-    } = await this.post('/auctions/items', {
+    const searchOption = {
       Sort: 'BUY_PRICE',
       ItemTier: 3,
       SortCondition: 'ASC',
@@ -264,10 +215,13 @@ export class LostarkService {
       CharacterClass: request.characterClass,
       SkillOptions: request.skillOptions ? [...request.skillOptions] : null,
       EtcOptions: request.etcOptions ? [...request.etcOptions] : null,
-    });
+    };
+    const result: APIResultAuctionItem = await this.post(
+      '/auctions/items',
+      searchOption,
+    );
     let auctionItem: AuctionItem = null;
 
-    // 검색 결과 parsing
     // 즉시구매가 가능한 최저가 아이템 반환
     if (result?.Items) {
       for (let i = 0; i < result.Items.length; i++) {
@@ -302,14 +256,15 @@ export class LostarkService {
   // CHARACTER //
   ///////////////
   async searchCharacter(characterName: string): Promise<Character | number> {
-    let result = await this.get(
+    let result: APIResultCharacter = await this.get(
       `/armories/characters/${characterName}?filters=profiles%2Bequipment%2Bengravings%2Bcombat-skills%2Bgems`,
     );
 
     // 상태코드가 반환된 경우
     while (Number.isInteger(result)) {
+      const statusCode = Number(result);
       // 429 재시도
-      if (result === 429) {
+      if (statusCode === 429) {
         this.logger.warn('Rate Limit Exceeded - Retry after 1minute');
         await wait(1000 * 60);
         result = await this.get(
@@ -318,51 +273,49 @@ export class LostarkService {
       }
       // 그 외 상태코드 반환
       else {
-        return result;
+        return statusCode;
       }
     }
 
     if (result) {
       return CharacterBuilder(
-        this.parseCharacterProfile(result),
-        this.parseCharacterSetting(result),
-        this.parseCharacterSkill(result),
+        this.parseCharacterProfile(result.ArmoryProfile),
+        this.parseCharacterSetting(
+          result.ArmoryProfile,
+          result.ArmoryEquipment,
+          result.ArmoryEngraving,
+        ),
+        this.parseCharacterSkill(result.ArmorySkills, result.ArmoryGem),
       );
     } else {
       return null;
     }
   }
 
-  private parseCharacterProfile({
-    ArmoryProfile,
-    ArmoryEquipment,
-    ArmoryEngraving,
-  }): Profile {
-    if (ArmoryProfile && ArmoryEquipment && ArmoryEngraving) {
-      const result: Profile = {
-        characterName: ArmoryProfile.CharacterName,
-        serverName: ArmoryProfile.ServerName,
-        className: ArmoryProfile.CharacterClassName,
-        itemLevel: Number(ArmoryProfile.ItemAvgLevel.replace(',', '')),
+  private parseCharacterProfile(armoryProfile: ArmoryProfile): Profile {
+    if (armoryProfile) {
+      return {
+        characterName: armoryProfile.CharacterName,
+        serverName: armoryProfile.ServerName,
+        className: armoryProfile.CharacterClassName,
+        itemLevel: Number(armoryProfile.ItemAvgLevel.replace(',', '')),
       };
-
-      return result;
     } else {
       return null;
     }
   }
 
-  private parseCharacterSetting({
-    ArmoryProfile,
-    ArmoryEquipment,
-    ArmoryEngraving,
-  }): Setting {
-    if (ArmoryProfile && ArmoryEquipment && ArmoryEngraving) {
+  private parseCharacterSetting(
+    armoryProfile: ArmoryProfile,
+    armoryEquipments: ArmoryEquipment[],
+    armoryEngraving: ArmoryEngraving,
+  ): Setting {
+    if (armoryProfile && armoryEquipments && armoryEngraving) {
       const result: Setting = {
-        stat: this.parseStat(ArmoryProfile.Stats),
-        set: this.parseSet(ArmoryEquipment),
-        elixir: this.parseElixir(ArmoryEquipment),
-        engravings: this.parseEngraving(ArmoryEngraving),
+        stat: this.parseStat(armoryProfile.Stats),
+        set: this.parseSet(armoryEquipments),
+        elixir: this.parseElixir(armoryEquipments),
+        engravings: this.parseEngraving(armoryEngraving),
       };
 
       return result;
@@ -371,13 +324,7 @@ export class LostarkService {
     }
   }
 
-  private parseStat(
-    stats: {
-      Type: string;
-      Value: string;
-      Tooltip: string[];
-    }[],
-  ): string {
+  private parseStat(stats: ProfileStat[]): string {
     const statValues: { type: string; value: number }[] = stats
       .map((stat) => {
         const type = stat.Type;
@@ -413,15 +360,7 @@ export class LostarkService {
     }
   }
 
-  private parseSet(
-    equipments: {
-      Type: string;
-      Name: string;
-      Icon: string;
-      Grade: string;
-      Tooltip: string;
-    }[],
-  ): string {
+  private parseSet(armoryEquipments: ArmoryEquipment[]): string {
     const setCounts = Sets.map((value) => {
       return { set: value, count: 0 };
     });
@@ -430,7 +369,7 @@ export class LostarkService {
     let handSet = -1;
     let result = '';
 
-    equipments.forEach((equipment) => {
+    armoryEquipments.forEach((equipment) => {
       const type = equipment.Type;
       const name = equipment.Name;
       const grade = equipment.Grade;
@@ -481,20 +420,12 @@ export class LostarkService {
     return result;
   }
 
-  private parseElixir(
-    equipments: {
-      Type: string;
-      Name: string;
-      Icon: string;
-      Grade: string;
-      Tooltip: string;
-    }[],
-  ): string {
+  private parseElixir(armoryEquipments: ArmoryEquipment[]): string {
     let elixir = null;
 
-    for (let equipment of equipments) {
+    for (let equipment of armoryEquipments) {
       if (equipment.Type === '장갑') {
-        const tooltip = JSON.parse(equipments[1].Tooltip);
+        const tooltip = JSON.parse(equipment.Tooltip);
 
         for (let element in tooltip) {
           if (tooltip[element].type === 'IndentStringGroup') {
@@ -519,19 +450,8 @@ export class LostarkService {
     return elixir;
   }
 
-  private parseEngraving(engravings: {
-    Engravings: {
-      Slot: number;
-      Name: string;
-      Icon: string;
-      Tooltip: string;
-    }[];
-    Effects: {
-      Name: string;
-      Description: string;
-    }[];
-  }): Engraving[] {
-    const result: Engraving[] = engravings.Effects.map((engraving) => {
+  private parseEngraving(armoryEngraving: ArmoryEngraving): Engraving[] {
+    const result: Engraving[] = armoryEngraving.Effects.map((engraving) => {
       const data = engraving.Name;
       const name = data.substring(0, data.indexOf('Lv.') - 1);
       const level = Number(
@@ -544,88 +464,50 @@ export class LostarkService {
     else return result;
   }
 
-  private parseCharacterSkill({ ArmorySkills, ArmoryGem }): Skill[] {
+  private parseCharacterSkill(
+    armorySkills: ArmorySkill[],
+    armoryGem: ArmoryGem,
+  ): Skill[] {
     const result: Skill[] = [];
     const armorySkill: { [skillName: string]: Skill } = {};
     const gemSlot: string[] = new Array(11).fill('');
 
-    if (ArmorySkills && ArmoryGem) {
+    if (armorySkills && armoryGem) {
       // 채용한 스킬정보 parsing (4레벨 이상 혹은 룬을 착용한 스킬)
-      ArmorySkills.forEach(
-        (skill: {
-          Name: string;
-          Icon: string;
-          Level: number;
-          Type: string;
-          IsAwakening: boolean;
-          Tripods: {
-            Tier: number;
-            Slot: number;
-            Name: string;
-            Icon: string;
-            Level: number;
-            IsSelected: boolean;
-            Tooltip: string;
-          }[];
-          Rune: {
-            Name: string;
-            Icon: string;
-            Grade: string;
-            Tooltip: string;
+      armorySkills.forEach((skill) => {
+        if (skill.Level >= 4 || skill.Rune) {
+          armorySkill[skill.Name] = {
+            name: skill.Name,
+            level: skill.Level,
+            tripods: skill.Tripods.map((tripod) => {
+              if (tripod.IsSelected) return tripod.Name;
+            }).filter((e) => e),
+            rune: skill.Rune
+              ? {
+                  name: skill.Rune.Name,
+                  grade: skill.Rune.Grade,
+                }
+              : null,
+            gems: [],
           };
-          Tooltip: string;
-        }) => {
-          if (skill.Level >= 4 || skill.Rune) {
-            armorySkill[skill.Name] = {
-              name: skill.Name,
-              level: skill.Level,
-              tripods: skill.Tripods.map((tripod) => {
-                if (tripod.IsSelected) return tripod.Name;
-              }).filter((e) => e),
-              rune: skill.Rune
-                ? {
-                    name: skill.Rune.Name,
-                    grade: skill.Rune.Grade,
-                  }
-                : null,
-              gems: [],
-            };
-          }
-        },
-      );
+        }
+      });
 
       // 채용한 스킬들의 보석정보 추가
-      ArmoryGem.Gems.forEach(
-        (gem: {
-          Slot: number;
-          Name: string;
-          Icon: string;
-          Level: number;
-          Grade: string;
-          Tooltip: string;
-        }) => {
-          gemSlot[gem.Slot] = gem.Name;
-        },
-      );
-      ArmoryGem.Effects.forEach(
-        (gemEffect: {
-          GemSlot: number;
-          Name: string;
-          Description: string;
-          Icon: string;
-          Tooltip: string;
-        }) => {
-          if (armorySkill[gemEffect.Name]) {
-            const gemName = gemSlot[gemEffect.GemSlot];
+      armoryGem.Gems.forEach((gem) => {
+        gemSlot[gem.Slot] = gem.Name;
+      });
+      armoryGem.Effects.forEach((gemEffect) => {
+        if (armorySkill[gemEffect.Name]) {
+          const gemName = gemSlot[gemEffect.GemSlot];
 
-            if (gemName.includes('멸화')) {
-              armorySkill[gemEffect.Name].gems.push('멸화');
-            } else if (gemName.includes('홍염')) {
-              armorySkill[gemEffect.Name].gems.push('홍염');
-            }
+          if (gemName.includes('멸화')) {
+            armorySkill[gemEffect.Name].gems.push('멸화');
+          } else if (gemName.includes('홍염')) {
+            armorySkill[gemEffect.Name].gems.push('홍염');
           }
-        },
-      );
+        }
+      });
     }
 
     for (let skillName in armorySkill) {

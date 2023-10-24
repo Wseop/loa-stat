@@ -33,3 +33,35 @@ export interface AuctionItemOption {
   isPenalty: boolean;
   className: string;
 }
+
+export interface APIResultAuctionItem {
+  PageNo: number;
+  PageSize: number;
+  TotalCount: number;
+  Items: {
+    Name: string;
+    Grade: string;
+    Tier: number;
+    Level: number;
+    Icon: string;
+    GradeQuality: number;
+    AuctionInfo: {
+      StartPrice: number;
+      BuyPrice: number;
+      BidPrice: number;
+      EndDate: string;
+      BidCount: number;
+      BidStartPrice: number;
+      IsCompetitive: boolean;
+      TradeAllowCount: number;
+    };
+    Options: {
+      Type: string;
+      OptionName: string;
+      OptionNameTripod: string;
+      Value: number;
+      IsPenalty: boolean;
+      ClassName: string;
+    }[];
+  }[];
+}

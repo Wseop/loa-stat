@@ -14,3 +14,32 @@ export interface MarketItem {
   iconPath: string;
   minPrice: number;
 }
+
+export interface APIResultMarketItemAvg {
+  Name: string;
+  TradeRemainCount: number;
+  BundleCount: number;
+  Stats: {
+    Date: string;
+    AvgPrice: number;
+    TradeCount: number;
+  }[];
+  ToolTip: string;
+}
+
+export interface APIResultMarketItem {
+  PageNo: number;
+  PageSize: number;
+  TotalCout: number;
+  Items: {
+    Id: number;
+    Name: string;
+    Grade: string;
+    Icon: string;
+    BundleCount: number;
+    TradeRemainCount: number;
+    YDayAvgPrice: number;
+    RecentPrice: number;
+    CurrentMinPrice: number;
+  }[];
+}
