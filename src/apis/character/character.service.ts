@@ -301,13 +301,11 @@ export class CharacterService {
     // from db
     while (characterNames?.length > 0) {
       await this.refreshCharacter(characterNames.pop());
-      await wait(100);
     }
 
     // from request
     while (this.addRequestQ.length > 0) {
       await this.refreshCharacter(this.popRequest());
-      await wait(100);
     }
 
     this.logger.log('END | RefreshDB');
