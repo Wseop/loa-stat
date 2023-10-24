@@ -8,8 +8,8 @@ export class NoticeDto implements LostarkNotice {
   @ApiProperty({ type: String })
   title: string;
 
-  @ApiProperty({ type: Date })
-  date: Date;
+  @ApiProperty({ type: String })
+  date: string;
 
   @ApiProperty({ type: String })
   link: string;
