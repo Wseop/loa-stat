@@ -11,7 +11,6 @@ import { CharacterSkillsDto } from './dtos/character-skills.dto';
 import { ClassEngravingMap } from 'src/commons/consts/lostark.const';
 import { LostarkService } from 'src/commons/lostark/lostark.service';
 import { ValidateCharacter } from './functions/character.functions';
-import { wait } from 'src/commons/utils/time';
 
 @Injectable()
 export class CharacterService {
