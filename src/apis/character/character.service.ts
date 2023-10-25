@@ -41,7 +41,7 @@ export class CharacterService {
       () => {
         this.refreshDB();
       },
-      1000 * 60 * 60 * 24,
+      1000 * 60 * 60 * 24 * 7,
     );
   }
 
