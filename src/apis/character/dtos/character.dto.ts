@@ -75,4 +75,7 @@ export class CharacterDto extends Character {
 
   @ApiProperty({ type: [SkillDto] })
   skills: Skill[];
+
+  @ApiProperty({ type: String })
+  updated: string;
 }

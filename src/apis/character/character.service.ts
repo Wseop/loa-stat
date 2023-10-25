@@ -61,7 +61,6 @@ export class CharacterService {
       {
         _id: 0,
         createdAt: 0,
-        updatedAt: 0,
       },
     );
   }
