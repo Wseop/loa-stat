@@ -43,6 +43,13 @@ export class CharacterService {
       },
       1000 * 60 * 60 * 24 * 7,
     );
+
+    setInterval(
+      () => {
+        this.processQ();
+      },
+      1000 * 60 * 60,
+    );
   }
 
   ////////////////////
@@ -302,11 +309,13 @@ export class CharacterService {
       await this.refreshCharacter(characterNames.pop());
     }
 
+    this.logger.log('END | RefreshDB');
+  }
+
+  private async processQ(): Promise<void> {
     // from request
     while (this.addRequestQ.length > 0) {
       await this.refreshCharacter(this.popRequest());
     }
-
-    this.logger.log('END | RefreshDB');
   }
 }
