@@ -27,7 +27,7 @@ export const MarketPriceCategoryMap: {
       return `${gemLevel}레벨 멸화의 보석`;
     }
   }),
-  각인서: Array.from(
+  '전설 각인서': Array.from(
     [...Engravings, ...Object.keys(ClassEngravingMap)],
     (v) => {
       if (Engravings.includes(v)) return `${v} 각인서`;
