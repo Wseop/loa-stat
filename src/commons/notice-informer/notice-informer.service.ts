@@ -28,7 +28,7 @@ export class NoticeInformerService {
   private async refreshLostarkNoticeId() {
     // 성공할때까지 10초 간격으로 시도
     while (true) {
-      const notices: LostarkNotice[] = await this.lostarkService.getNotices();
+      const notices: LostarkNotice[] = await this.lostarkService.scrapNotices();
 
       if (notices?.length > 0) {
         for (let notice of notices) {
@@ -47,7 +47,7 @@ export class NoticeInformerService {
 
   // 디스코드 채널로 신규 공지 posting
   private async postLostarkNotice() {
-    const notices: LostarkNotice[] = await this.lostarkService.getNotices();
+    const notices: LostarkNotice[] = await this.lostarkService.scrapNotices();
     const embeds: EmbedBuilder[] = [];
 
     if (notices) {

@@ -23,7 +23,7 @@ export class NoticesService {
   }
 
   private async updateNoticeCache(): Promise<void> {
-    const notices = await this.lostarkService.getNotices();
+    const notices = await this.lostarkService.scrapNotices();
     if (notices?.length > 0) {
       this.cacheManager.set(this.cacheKey, notices, { ttl: 60 * 60 * 24 });
     }

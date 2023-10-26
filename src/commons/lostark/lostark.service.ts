@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import { GoogleSheetService } from 'src/commons/google-sheet/google-sheet.service';
 import {
   LostarkNotice,
@@ -39,6 +39,7 @@ import {
   ArmorySkill,
   ProfileStat,
 } from './interfaces/lostark-character.interface';
+import { load } from 'cheerio';
 
 @Injectable()
 export class LostarkService {
@@ -59,6 +60,10 @@ export class LostarkService {
       },
       1000 * 60 * 60 * 24,
     );
+
+    setTimeout(() => {
+      this.scrapNotices();
+    }, 1000 * 5);
   }
 
   /////////
@@ -161,6 +166,49 @@ export class LostarkService {
     } else {
       return null;
     }
+  }
+
+  // Notice API에 최신 공지가 없어서 직접 scrap
+  async scrapNotices(): Promise<LostarkNotice[]> {
+    let result: AxiosResponse<any, any> = null;
+
+    try {
+      result = await axios.get(
+        'https://lostark.game.onstove.com/News/Notice/List',
+      );
+    } catch (error) {
+      this.logger.warn('Scrap notice error');
+      return [];
+    }
+
+    const $ = load(result.data);
+    const noticeCount = $(
+      '#list > div.list.list--default > ul:nth-child(2)',
+    ).children().length;
+    const notices: LostarkNotice[] = [];
+
+    for (let i = 1; i <= noticeCount; i++) {
+      const linkSelector = `#list > div.list.list--default > ul:nth-child(2) > li:nth-child(${i}) > a`;
+      const titleSelector = `#list > div.list.list--default > ul:nth-child(2) > li:nth-child(${i}) > a > div.list__subject > span.list__title`;
+      const dateSelector = `#list > div.list.list--default > ul:nth-child(2) > li:nth-child(${i}) > a > div.list__date`;
+      const href = $(linkSelector).attr('href');
+      const title = $(titleSelector).text();
+      const date = $(dateSelector).text();
+
+      // 공지 id parsing
+      const start = String('/News/Notice/Views/').length;
+      const end = href.indexOf('?');
+      const noticeId = Number(href.substring(start, end));
+
+      notices.push({
+        noticeId,
+        title,
+        link: `https://lostark.game.onstove.com${href.substring(0, end)}`,
+        date,
+      });
+    }
+
+    return notices;
   }
 
   ////////////
