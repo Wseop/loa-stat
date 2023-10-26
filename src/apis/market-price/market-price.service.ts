@@ -28,7 +28,7 @@ export class MarketPriceService {
   getCategoryPrice(category: MarketPriceCategory): ItemPrice[] {
     const itemPrices: ItemPrice[] = [];
 
-    MarketPriceCategoryMap[category].forEach((itemName) => {
+    MarketPriceCategoryMap[category]?.forEach((itemName) => {
       itemPrices.push(this.itemPrice[itemName]);
     });
 
