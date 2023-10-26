@@ -470,7 +470,7 @@ export class LostarkService {
   }
 
   private parseEngraving(armoryEngraving: ArmoryEngraving): Engraving[] {
-    const result: Engraving[] = armoryEngraving.Effects.map((engraving) => {
+    const result: Engraving[] = armoryEngraving?.Effects?.map((engraving) => {
       const data = engraving.Name;
       const name = data.substring(0, data.indexOf('Lv.') - 1);
       const level = Number(
@@ -479,7 +479,7 @@ export class LostarkService {
       return { name, level };
     });
 
-    if (result.length === 0) return null;
+    if (result?.length === 0) return null;
     else return result;
   }
 
