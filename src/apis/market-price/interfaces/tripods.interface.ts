@@ -8,6 +8,7 @@ export interface TripodSearchOption {
 export interface TripodPrice {
   skillName: string;
   tripodName: string;
+  iconPath?: string;
   price: number;
   updated: string;
 }

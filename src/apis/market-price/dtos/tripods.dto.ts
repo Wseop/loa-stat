@@ -8,6 +8,9 @@ export class TripodPriceDto implements TripodPrice {
   @ApiProperty({ type: String })
   tripodName: string;
 
+  @ApiProperty({ type: String, required: false })
+  iconPath?: string;
+
   @ApiProperty({ type: Number })
   price: number;
 

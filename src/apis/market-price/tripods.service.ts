@@ -83,6 +83,7 @@ export class TripodsService {
           tripodPrices.push({
             skillName: searchOption.skillName,
             tripodName: searchOption.tripodName,
+            iconPath: auctionItem.iconPath,
             price: auctionItem.buyPrice,
             updated: currentDate,
           });
