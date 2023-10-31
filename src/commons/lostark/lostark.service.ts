@@ -302,6 +302,7 @@ export class LostarkService {
               };
             }),
             buyPrice: item.AuctionInfo.BuyPrice,
+            iconPath: item.Icon,
           };
 
           break;

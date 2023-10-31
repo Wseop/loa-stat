@@ -112,6 +112,7 @@ export class MarketPriceService {
         this.updatePrice({
           itemName: auctionItem.itemName,
           itemGrade: auctionItem.itemGrade,
+          iconPath: auctionItem.iconPath,
           price: auctionItem.buyPrice,
           updated: currentDate,
         });

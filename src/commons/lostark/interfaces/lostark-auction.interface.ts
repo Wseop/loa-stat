@@ -24,6 +24,7 @@ export interface AuctionItem {
   itemQuality?: number;
   options: AuctionItemOption[];
   buyPrice: number;
+  iconPath?: string;
 }
 
 export interface AuctionItemOption {
