@@ -97,6 +97,8 @@ export class TripodsService {
   private async updateClassTripodsPrice(className: string): Promise<void> {
     const tripods = await this.searchClassTripods(className);
 
+    if (tripods.length <= 0) return;
+
     tripods.sort((a, b) => b.price - a.price);
     this.tripodPrices[className] = tripods;
   }
