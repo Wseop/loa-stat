@@ -2,6 +2,7 @@
 - 로스트아크 컨텐츠 및 캐릭터 세팅 현황 등을 제공하기 위해 만든 API
 - ~~[Loa-Stat](http://34.64.181.235:8942/)~~
 - ~~[Loa-Stat API](http://34.64.181.235:7942/api)~~
+- 활용도가 낮아 서버 내림. 실행 예시 추가 예정
 ## Tech Stack
 <img src="https://img.shields.io/badge/nest.js-E0234E?style=for-the-badge&logo=nestjs&logoColor=white"><img src="https://img.shields.io/badge/typescript-3178C6?style=for-the-badge&logo=typescript&logoColor=white"><img src="https://img.shields.io/badge/mongodb-47A248?style=for-the-badge&logo=mongodb&logoColor=white"><img src="https://img.shields.io/badge/redis-DC382D?style=for-the-badge&logo=redis&logoColor=white">
 ## File Tree
