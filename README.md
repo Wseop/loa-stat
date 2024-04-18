@@ -1,11 +1,29 @@
 # loa-stat
 - 로스트아크 컨텐츠 및 캐릭터 세팅 현황 등을 제공하기 위해 만든 API
-- ~~[Loa-Stat](http://34.64.181.235:8942/)~~
-- ~~[Loa-Stat API](http://34.64.181.235:7942/api)~~
-- 활용도가 낮아 서버 내림. 실행 예시 추가 예정
-## Tech Stack
+# Tech Stack
 <img src="https://img.shields.io/badge/nest.js-E0234E?style=for-the-badge&logo=nestjs&logoColor=white"><img src="https://img.shields.io/badge/typescript-3178C6?style=for-the-badge&logo=typescript&logoColor=white"><img src="https://img.shields.io/badge/mongodb-47A248?style=for-the-badge&logo=mongodb&logoColor=white"><img src="https://img.shields.io/badge/redis-DC382D?style=for-the-badge&logo=redis&logoColor=white">
-## File Tree
+# 실행 예시
+## 1. 캐릭터 통계 정보
+- 서버별
+<img src="https://github.com/Wseop/loa-stat/assets/18005580/a1c4d60f-28ff-4538-bb32-62e8643d5a6a" />
+
+- 직업별
+<img src="https://github.com/Wseop/loa-stat/assets/18005580/0783f00f-c1db-4e6e-9e00-d75db10a185a" />
+
+- 직업각인 세팅
+<img src="https://github.com/Wseop/loa-stat/assets/18005580/844c4480-5160-4a4b-b8eb-e03bdfc32b9e" />
+
+- 직업각인 스킬
+<img src="https://github.com/Wseop/loa-stat/assets/18005580/aed15b84-f08c-46a6-92de-ed38de3e4535" />
+
+## 2. 시세 조회
+[Desktop-2024.04.18-16.31.57.02.webm](https://github.com/Wseop/loa-stat/assets/18005580/7d90fa71-5e71-4e54-a315-b2b09a169516)
+
+## 3. 카오스던전/가디언토벌 보상 통계
+[Desktop-2024.04.18-16.32.26.03.webm](https://github.com/Wseop/loa-stat/assets/18005580/b222d9ba-5248-446e-a023-d096195a347c)
+- 실시간 거래소 가격을 기반으로 골드 수익량 계산
+
+# File Tree
 ```bash
 📦src
  ┣ 📂apis
@@ -99,7 +117,7 @@
  ┣ 📜app.module.ts
  ┗ 📜main.ts
 ```
-## References
+# References
 - [loa-stat-frontend](https://github.com/Wseop/loa-stat-frontend) : Front-End
 - [Nest.JS](https://docs.nestjs.com/)
 - [Necord](https://necord.org/) : A module for creating Discord bots using NestJS, based on Discord.js
